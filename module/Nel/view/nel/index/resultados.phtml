@@ -1,0 +1,1076 @@
+<?php 
+$optionSectores = $this->optionSectores;
+$optionParroquias = $this->optionParroquias;
+$optionRangoEdad = $this->optionRangoEdad;
+$optionSexo = $this->optionSexo;
+?>
+
+<div class="content-wrapper" style="min-height: 1123px;">
+    <br><br>
+    <section class="content-header">
+        <h1>
+            RESULTADOS ENCUESTA
+            <small>Nel-Latino</small>
+        </h1>
+    </section>
+    <section class="content">
+        <div class="box-body">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="col-lg-12">
+                        <h2 class="title text-center" style="font-family: fantasy;">ELECCIONES SECCIONALES 2019</h2>
+                    </div>
+                    <div class="col-lg-12" id="mensajeResultadosEncuesta"></div>
+                    <div id="contenedorResultadosEncuesta" class="col-lg-12 box ">
+                        <div class="nav-tabs-custom">
+                            <ul class="nav nav-tabs">
+                                <li class="active"><a style="cursor: pointer;" href="#resultadosPorCandidatura" onclick="filtrarResultadoPorCandidatura();" data-toggle="tab" aria-expanded="true">RESULTADOS POR CANDIDATURA</a></li>
+                                <li class=""><a style="cursor: pointer;" href="#resultadosPorSectores" onclick="filtrarResultadoPorSector();" data-toggle="tab" aria-expanded="false">RESULTADOS POR SECTOR</a></li>
+                                <li class=""><a style="cursor: pointer;" href="#resultadosPorParroquias" onclick="filtrarResultadoPorParroquia();" data-toggle="tab" aria-expanded="false">RESULTADOS POR PARRÓQUIA</a></li>
+                                <li class=""><a style="cursor: pointer;" href="#resultadosPorRangoEdad" onclick="filtrarResultadoPorRangoEdad();" data-toggle="tab" aria-expanded="false">RESULTADOS POR RANGO DE EDAD</a></li>
+                                <li class=""><a style="cursor: pointer;" href="#resultadosPorSexo" onclick="filtrarResultadoPorSexo();" data-toggle="tab" aria-expanded="false">RESULTADOS POR SEXO</a></li>
+                            </ul>
+                            <div class="tab-content">
+                                <div id="resultadosPorCandidatura" class="tab-pane active " >
+                                    <div class="col-lg-12" id="mensajeResultadodPorCandidatura"></div>
+                                    <div class="col-lg-12 text-center" id="preguntaAlcalde"></div>
+                                    <div class="col-lg-12">
+                                        <div class="chart-responsive col-lg-6">
+                                            <div  id="charPorCandidaturaAlcalde" style="width: 100%; position: relative;"></div>  
+                                        </div> 
+                                        <div class="col-lg-6" id="contenedorTablaAlcalde">
+
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 text-center" id="preguntaConcejal"></div>
+                                    <div class="col-lg-12">
+                                        <div class="chart-responsive col-lg-6">
+                                            <div  id="charPorCandidaturaConcejal" style="width: 100%; position: relative;"></div>  
+                                        </div> 
+                                        <div class="col-lg-6" id="contenedorTablaConcejal">
+
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 text-center" id="preguntaPrefecto"></div>
+                                    <div class="col-lg-12">
+                                        <div class="chart-responsive col-lg-6">
+                                            <div  id="charPorCandidaturaPrefecto" style="width: 100%; position: relative;"></div>  
+                                        </div> 
+                                        <div class="col-lg-6" id="contenedorTablaPrefecto">
+
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 text-center" id="preguntaJunta"></div>
+                                    <div class="col-lg-12">
+                                        <div class="chart-responsive col-lg-6">
+                                            <div  id="charPorCandidaturaJunta" style="width: 100%; position: relative;"></div>  
+                                        </div> 
+                                        <div class="col-lg-6" id="contenedorTablaJunta">
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="resultadosPorSectores">
+                                    <div class="col-lg-12 form-group">
+                                        <br>
+                                        <select onchange="filtrarResultadoPorSector();" class="form-control" id="selectSector" style="font-weight: bold;">
+                                           <?php echo $optionSectores; ?>
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-12" id="mensajeResultadodPorSector"></div>
+                                    <div class="col-lg-12 text-center" id="preguntaAlcaldeSector"></div>
+                                    <div class="col-lg-12">
+                                        <div class="chart-responsive col-lg-6">
+                                            <div  id="charAlcaldeSector" style="width: 100%; position: relative;"></div>  
+                                        </div> 
+                                        <div class="col-lg-6" id="contenedorTablaAlcaldeSector">
+
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 text-center" id="preguntaConcejalSector"></div>
+                                    <div class="col-lg-12">
+                                        <div class="chart-responsive col-lg-6">
+                                            <div  id="charConcejalSector" style="width: 100%; position: relative;"></div>  
+                                        </div> 
+                                        <div class="col-lg-6" id="contenedorTablaConcejalSector">
+
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 text-center" id="preguntaPrefectoSector"></div>
+                                    <div class="col-lg-12">
+                                        <div class="chart-responsive col-lg-6">
+                                            <div  id="charPrefectoSector" style="width: 100%; position: relative;"></div>  
+                                        </div> 
+                                        <div class="col-lg-6" id="contenedorTablaPrefectoSector">
+
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 text-center" id="preguntaJuntaSector"></div>
+                                    <div class="col-lg-12">
+                                        <div class="chart-responsive col-lg-6">
+                                            <div  id="charJuntaSector" style="width: 100%; position: relative;"></div>  
+                                        </div> 
+                                        <div class="col-lg-6" id="contenedorTablaJuntaSector">
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="resultadosPorParroquias">
+                                    <div class="col-lg-12 form-group">
+                                        <br>
+                                        <select onchange="filtrarResultadoPorParroquia();" class="form-control" id="selectParroquia" style="font-weight: bold;">
+                                           <?php echo $optionParroquias; ?>
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-12" id="mensajeResultadodPorParroquia"></div>
+                                    <div class="col-lg-12 text-center" id="preguntaAlcaldeParroquia"></div>
+                                    <div class="col-lg-12">
+                                        <div class="col-lg-8">
+                                            <div class="col-lg-6 chart-responsive">
+                                                <div class="text-center" id="tituloAlcaldeSectorUrbano"></div>
+                                                <div id="charAlcaldeParroquiaSectorUrbano" style="width: 100%; position: relative;"></div>  
+                                            </div>
+                                            <div class="col-lg-6 chart-responsive">
+                                                <div class="text-center" id="tituloAlcaldeSectorRural"></div>
+                                                <div id="charAlcaldeParroquiaSectorRural" style="width: 100%; position: relative;"></div> 
+                                            </div>
+                                        </div> 
+                                        <div class="col-lg-4" id="contenedorTablaAlcaldeParroquia">
+
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 text-center" id="preguntaConcejalParroquia"></div>
+                                    <div class="col-lg-12">
+                                        <div class="col-lg-8">
+                                            <div class="col-lg-6 chart-responsive">
+                                                <div class="text-center" id="tituloConcejalSectorUrbano"></div>
+                                                <div id="charConcejalParroquiaSectorUrbano" style="width: 100%; position: relative;"></div>
+                                            </div>
+                                            <div class="col-lg-6 chart-responsive">
+                                                <div class="text-center" id="tituloConcejalSectorRural"></div>
+                                                <div id="charConcejalParroquiaSectorRural" style="width: 100%; position: relative;"></div> 
+                                            </div>
+                                        </div> 
+                                        <div class="col-lg-4" id="contenedorTablaConcejalParroquia">
+
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 text-center" id="preguntaPrefectoParroquia"></div>
+                                    <div class="col-lg-12">
+                                        <div class="chart-responsive col-lg-8">
+                                            <div class="col-lg-6 chart-responsive">
+                                                <div class="text-center" id="tituloPrefectoSectorUrbano"></div>
+                                                <div id="charPrefectoParroquiaSectorUrbano" style="width: 100%; position: relative;"></div>  
+                                            </div> 
+                                            <div class="col-lg-6 chart-responsive">
+                                                <div class="text-center" id="tituloPrefectoSectorRural"></div>
+                                                <div id="charPrefectoParroquiaSectorRural" style="width: 100%; position: relative;"></div> 
+                                            </div> 
+                                        </div> 
+                                        <div class="col-lg-4" id="contenedorTablaPrefectoParroquia">
+
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 text-center" id="preguntaJuntaParroquia"></div>
+                                    <div class="col-lg-12">
+                                        <div class="chart-responsive col-lg-8">
+                                            <div class="col-lg-6 chart-responsive">
+                                                <div class="text-center" id="tituloJuntaSectorUrbano"></div>
+                                                <div id="charJuntaParroquiaSectorUrbano" style="width: 100%; position: relative;"></div>  
+                                            </div> 
+                                            <div class="col-lg-6 chart-responsive">
+                                                <div class="text-center" id="tituloJuntaSectorRural"></div>
+                                                <div id="charJuntaParroquiaSectorRural" style="width: 100%; position: relative;"></div> 
+                                            </div> 
+                                        </div> 
+                                        <div class="col-lg-4" id="contenedorTablaJuntaParroquia">
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="resultadosPorRangoEdad">
+                                    <div class="col-lg-12 form-group">
+                                        <br>
+                                        <select onchange="filtrarResultadoPorRangoEdad();" class="form-control" id="selectRangoEdad" style="font-weight: bold;">
+                                           <?php echo $optionRangoEdad; ?>
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-12" id="mensajeResultadodPorRangoEdad"></div>
+                                    <div class="col-lg-12 text-center" id="preguntaAlcaldeRangoEdad"></div>
+                                    <div class="col-lg-12">
+                                        <div class="chart-responsive col-lg-6">
+                                            <div  id="charAlcaldeRangoEdad" style="width: 100%; position: relative;"></div>  
+                                        </div> 
+                                        <div class="col-lg-6" id="contenedorTablaAlcaldeRangoEdad">
+
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 text-center" id="preguntaConcejalRangoEdad"></div>
+                                    <div class="col-lg-12">
+                                        <div class="chart-responsive col-lg-6">
+                                            <div  id="charConcejalRangoEdad" style="width: 100%; position: relative;"></div>  
+                                        </div> 
+                                        <div class="col-lg-6" id="contenedorTablaConcejalRangoEdad">
+
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 text-center" id="preguntaPrefectoRangoEdad"></div>
+                                    <div class="col-lg-12">
+                                        <div class="chart-responsive col-lg-6">
+                                            <div  id="charPrefectoRangoEdad" style="width: 100%; position: relative;"></div>  
+                                        </div> 
+                                        <div class="col-lg-6" id="contenedorTablaPrefectoRangoEdad">
+
+                                        </div>
+                                    </div>
+                                     <div class="col-lg-12 text-center" id="preguntaJuntaRangoEdad"></div>
+                                    <div class="col-lg-12">
+                                        <div class="chart-responsive col-lg-6">
+                                            <div  id="charJuntaRangoEdad" style="width: 100%; position: relative;"></div>  
+                                        </div> 
+                                        <div class="col-lg-6" id="contenedorTablaJuntaRangoEdad">
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="resultadosPorSexo">
+                                    <div class="col-lg-12 form-group">
+                                        <br>
+                                        <select onchange="filtrarResultadoPorSexo();" class="form-control" id="selectSexo" style="font-weight: bold;">
+                                           <?php echo $optionSexo; ?>
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-12" id="mensajeResultadodPorSexo"></div>
+                                    <div class="col-lg-12 text-center" id="preguntaAlcaldeSexo"></div>
+                                    <div class="col-lg-12">
+                                        <div class="chart-responsive col-lg-6">
+                                            <div  id="charAlcaldeSexo" style="width: 100%; position: relative;"></div>  
+                                        </div> 
+                                        <div class="col-lg-6" id="contenedorTablaAlcaldeSexo">
+
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 text-center" id="preguntaConcejalSexo"></div>
+                                    <div class="col-lg-12">
+                                        <div class="chart-responsive col-lg-6">
+                                            <div  id="charConcejalSexo" style="width: 100%; position: relative;"></div>  
+                                        </div> 
+                                        <div class="col-lg-6" id="contenedorTablaConcejalSexo">
+
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 text-center" id="preguntaPrefectoSexo"></div>
+                                    <div class="col-lg-12">
+                                        <div class="chart-responsive col-lg-6">
+                                            <div  id="charPrefectoSexo" style="width: 100%; position: relative;"></div>  
+                                        </div> 
+                                        <div class="col-lg-6" id="contenedorTablaPrefectoSexo">
+
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 text-center" id="preguntaJuntaSexo"></div>
+                                    <div class="col-lg-12">
+                                        <div class="chart-responsive col-lg-6">
+                                            <div  id="charJuntaSexo" style="width: 100%; position: relative;"></div>  
+                                        </div> 
+                                        <div class="col-lg-6" id="contenedorTablaJuntaSexo">
+
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<script type="text/javascript">
+    $(document).ready(function(){
+        filtrarResultadoPorCandidatura();
+    })
+</script>
+<script type="text/javascript">
+function filtrarResultadoPorSexo(){
+    var idSexoEncriptado = $("#selectSexo").val();
+    if(idSexoEncriptado == 0){
+        $("#mensajeResultadodPorSexo").html('');
+        $("#charAlcaldeSexo").html('');
+        $("#charConcejalSexo").html('');
+        $("#charPrefectoSexo").html('');
+        $("#charJuntaSexo").html('');
+        $("#contenedorTablaAlcaldeSexo").html('');
+        $("#contenedorTablaConcejalSexo").html('');
+        $("#contenedorTablaPrefectoSexo").html('');
+        $("#contenedorTablaJuntaSexo").html('');
+        $("#preguntaAlcaldeSexo").html('');
+        $("#preguntaConcejalSexo").html('');
+        $("#preguntaPrefectoSexo").html('');
+        $("#preguntaJuntaSexo").html('');
+    }else {
+        $.ajax({
+            url : '<?php echo $this->basePath();?>/resultados/filtrarresultadoporsexo',
+            type: 'post',
+            dataType: 'JSON',
+            data : {idSexoEncriptado:idSexoEncriptado},
+            beforeSend : function() {
+                cargandoResultados("charAlcaldeSexo");
+                cargandoResultados("charConcejalSexo");
+                cargandoResultados("charPrefectoSexo");
+                cargandoResultados("charJuntaSexo");
+                cargandoResultados("contenedorTablaAlcaldeSexo");
+                cargandoResultados("contenedorTablaConcejalSexo");
+                cargandoResultados("contenedorTablaPrefectoSexo");
+                cargandoResultados("contenedorTablaJuntaSexo");
+                $("#mensajeResultadodPorSexo").html('');
+                $("#preguntaAlcaldeSexo").html('');
+                $("#preguntaConcejalSexo").html('');
+                $("#preguntaPrefectoSexo").html('');
+                $("#preguntaJuntaSexo").html('');
+
+            },
+            success: function(data, status){ 
+                if(data.validar == true)
+                {
+                    $("#charAlcaldeSexo").html('');
+                    $("#charConcejalSexo").html('');
+                    $("#charPrefectoSexo").html('');
+                    $("#charJuntaSexo").html('');
+                    $("#preguntaAlcaldeSexo").html('<h3>'+data.preguntaAlcalde+'</h3>');
+                    $("#preguntaConcejalSexo").html('<h3>'+data.preguntaConcejal+'</h3>');
+                    $("#preguntaPrefectoSexo").html('<h3>'+data.preguntaPrefecto+'</h3>');
+                    $("#preguntaJuntaSexo").html('<h3>'+data.preguntaJunta+'</h3>');
+                    $("#contenedorTablaAlcaldeSexo").html(data.tablaAlcalde);
+                    $("#contenedorTablaConcejalSexo").html(data.tablaConcejal);
+                    $("#contenedorTablaPrefectoSexo").html(data.tablaPrefecto);
+                    $("#contenedorTablaJuntaSexo").html(data.tablaJunta);
+                    new Morris.Donut({
+                        element: 'charAlcaldeSexo',
+                        data : data.charAlcalde,
+                        formatter: function (value, data) { return (value.toFixed(2)) + '%'; },
+                           resize: true,
+                           colors: ["red","orange","blue","green"],
+                        hideHover: 'auto'
+                     });
+
+                    new Morris.Donut({
+                        element: 'charConcejalSexo',
+                        data : data.charConcejal,
+                        formatter: function (value, data) { return (value.toFixed(2)) + '%'; },
+                           resize: true,
+                           colors: ["red","orange","blue","green"],
+                        hideHover: 'auto'
+                     });
+                     new Morris.Donut({
+                        element: 'charPrefectoSexo',
+                        data : data.charPrefecto,
+                        formatter: function (value, data) { return (value.toFixed(2)) + '%'; },
+                           resize: true,
+                           colors: ["red","orange","blue","green"],
+                        hideHover: 'auto'
+                     });
+                     new Morris.Donut({
+                        element: 'charJuntaSexo',
+                        data : data.charJunta,
+                        formatter: function (value, data) { return (value.toFixed(2)) + '%'; },
+                           resize: true,
+                           colors: ["red","orange","blue","green"],
+                        hideHover: 'auto'
+                     });
+                     
+                }else{     
+                    $("#preguntaAlcaldeSexo").html('');
+                    $("#preguntaConcejalSexo").html('');
+                    $("#preguntaPrefectoSexo").html('');
+                    $("#preguntaJuntaSexo").html('');
+                    $("#charAlcaldeSexo").html('');
+                    $("#charConcejalSexo").html('');
+                    $("#charPrefectoSexo").html('');
+                    $("#charJuntaSexo").html('');
+                    $("#contenedorTablaAlcaldeSexo").html('');
+                    $("#contenedorTablaConcejalSexo").html('');
+                    $("#contenedorTablaPrefectoSexo").html('');
+                    $("#contenedorTablaJuntaSexo").html('');
+                    $("#mensajeResultadodPorSexo").html(data.mensaje);
+                }
+            },
+            error: function(xhr, textStatus, errorThrown) {
+                $("#charAlcaldeSexo").html('');
+                $("#charConcejalSexo").html('');
+                $("#charPrefectoSexo").html('');
+                $("#charJuntaSexo").html('');
+                $("#contenedorTablaAlcaldeSexo").html('');
+                $("#contenedorTablaConcejalSexo").html('');
+                $("#contenedorTablaPrefectoSexo").html('');
+                $("#contenedorTablaJuntaSexo").html('');
+                 $("#preguntaAlcaldeSexo").html('');
+                $("#preguntaConcejalSexo").html('');
+                $("#preguntaPrefectoSexo").html('');
+                $("#preguntaJuntaSexo").html('');
+                if(xhr.status === 0){
+                    $("#mensajeResultadodPorSexo").html('<div class="alert alert-danger text-center" role="alert">NO HAY CONEXIÓN A INTERNET </div>');
+                }else if(xhr.status == 404){
+                    $("#mensajeResultadodPorSexo").html('<div class="alert alert-danger text-center" role="alert">PÁGINA NO ENCONTRADA ERROR. [404]</div>');
+                }else if(xhr.status == 500){
+                    $("#mensajeResultadodPorSexo").html('<div class="alert alert-danger text-center" role="alert">ERROR DEL SERVIDOR [500]</div>');
+                }else if(errorThrown === 'parsererror'){
+                    $("#mensajeResultadodPorSexo").html('<div class="alert alert-danger text-center" role="alert">Requested JSON parse failed</div>');
+                }else if(errorThrown === 'timeout'){
+                    $("#mensajeResultadodPorSexo").html('<div class="alert alert-danger text-center" role="alert">Time out error</div>');
+                }else if(errorThrown === 'abort'){
+                    $("#mensajeResultadodPorSexo").html('<div class="alert alert-danger text-center" role="alert">Ajax request aborted</div>');
+                }else{
+                    $("#mensajeResultadodPorSexo").html('<div class="alert alert-danger text-center" role="alert">OCURRIÓ UN ERROR INESPERADO</div>');
+                }
+            },
+            complete: function() {
+            }
+        });
+    }
+}
+</script>
+<script type="text/javascript">
+function filtrarResultadoPorRangoEdad(){
+    var idRangoEdadEncriptado = $("#selectRangoEdad").val();
+    if(idRangoEdadEncriptado == 0){
+        $("#mensajeResultadodPorRangoEdad").html('');
+        $("#charAlcaldeRangoEdad").html('');
+        $("#charConcejalRangoEdad").html('');
+        $("#charPrefectoRangoEdad").html('');
+        $("#charJuntaRangoEdad").html('');
+        $("#contenedorTablaAlcaldeRangoEdad").html('');
+        $("#contenedorTablaConcejalRangoEdad").html('');
+        $("#contenedorTablaPrefectoRangoEdad").html('');
+        $("#contenedorTablaJuntaRangoEdad").html('');
+        $("#preguntaAlcaldeRangoEdad").html('');
+        $("#preguntaConcejalRangoEdad").html('');
+        $("#preguntaPrefectoRangoEdad").html('');
+        $("#preguntaJuntaRangoEdad").html('');
+    }else {
+        $.ajax({
+            url : '<?php echo $this->basePath();?>/resultados/filtrarresultadoporrangoedad',
+            type: 'post',
+            dataType: 'JSON',
+            data : {idRangoEdadEncriptado:idRangoEdadEncriptado},
+            beforeSend : function() {
+                cargandoResultados("charAlcaldeRangoEdad");
+                cargandoResultados("charConcejalRangoEdad");
+                cargandoResultados("charPrefectoRangoEdad");
+                cargandoResultados("charJuntaRangoEdad");
+                cargandoResultados("contenedorTablaAlcaldeRangoEdad");
+                cargandoResultados("contenedorTablaConcejalRangoEdad");
+                cargandoResultados("contenedorTablaPrefectoRangoEdad");
+                cargandoResultados("contenedorTablaJuntaRangoEdad");
+                $("#mensajeResultadodPorRangoEdad").html('');
+                $("#preguntaAlcaldeRangoEdad").html('');
+                $("#preguntaConcejalRangoEdad").html('');
+                $("#preguntaPrefectoRangoEdad").html('');
+                $("#preguntaJuntaRangoEdad").html('');
+
+            },
+            success: function(data, status){ 
+                console.log(data)
+                if(data.validar == true)
+                {
+                    $("#charAlcaldeRangoEdad").html('');
+                    $("#charConcejalRangoEdad").html('');
+                    $("#charPrefectoRangoEdad").html('');
+                    $("#charJuntaRangoEdad").html('');
+                    $("#preguntaAlcaldeRangoEdad").html('<h3>'+data.preguntaAlcalde+'</h3>');
+                    $("#preguntaConcejalRangoEdad").html('<h3>'+data.preguntaConcejal+'</h3>');
+                    $("#preguntaPrefectoRangoEdad").html('<h3>'+data.preguntaPrefecto+'</h3>');
+                    $("#preguntaJuntaRangoEdad").html('<h3>'+data.preguntaJunta+'</h3>');
+                    $("#contenedorTablaAlcaldeRangoEdad").html(data.tablaAlcalde);
+                    $("#contenedorTablaConcejalRangoEdad").html(data.tablaConcejal);
+                    $("#contenedorTablaPrefectoRangoEdad").html(data.tablaPrefecto);
+                    $("#contenedorTablaJuntaRangoEdad").html(data.tablaJunta);
+                    new Morris.Donut({
+                        element: 'charAlcaldeRangoEdad',
+                        data : data.charAlcalde,
+                        formatter: function (value, data) { return (value.toFixed(2)) + '%'; },
+                           resize: true,
+                           colors: ["red","orange","blue","green"],
+                        hideHover: 'auto'
+                     });
+
+                    new Morris.Donut({
+                        element: 'charConcejalRangoEdad',
+                        data : data.charConcejal,
+                        formatter: function (value, data) { return (value.toFixed(2)) + '%'; },
+                           resize: true,
+                           colors: ["red","orange","blue","green"],
+                        hideHover: 'auto'
+                     });
+                     new Morris.Donut({
+                        element: 'charPrefectoRangoEdad',
+                        data : data.charPrefecto,
+                        formatter: function (value, data) { return (value.toFixed(2)) + '%'; },
+                           resize: true,
+                           colors: ["red","orange","blue","green"],
+                        hideHover: 'auto'
+                     });
+                     new Morris.Donut({
+                        element: 'charJuntaRangoEdad',
+                        data : data.charJunta,
+                        formatter: function (value, data) { return (value.toFixed(2)) + '%'; },
+                           resize: true,
+                           colors: ["red","orange","blue","green"],
+                        hideHover: 'auto'
+                     });
+                }else{     
+                    $("#preguntaAlcaldeRangoEdad").html('');
+                    $("#preguntaConcejalRangoEdad").html('');
+                    $("#preguntaPrefectoRangoEdad").html('');
+                    $("#preguntaJuntaRangoEdad").html('');
+                    $("#charAlcaldeRangoEdad").html('');
+                    $("#charConcejalRangoEdad").html('');
+                    $("#charPrefectoRangoEdad").html('');
+                    $("#charJuntaRangoEdad").html('');
+                    $("#contenedorTablaAlcaldeRangoEdad").html('');
+                    $("#contenedorTablaConcejalRangoEdad").html('');
+                    $("#contenedorTablaPrefectoRangoEdad").html('');
+                    $("#contenedorTablaJuntaRangoEdad").html('');
+                    $("#mensajeResultadodPorRangoEdad").html(data.mensaje);
+                }
+            },
+            error: function(xhr, textStatus, errorThrown) {
+                $("#charAlcaldeRangoEdad").html('');
+                $("#charConcejalRangoEdad").html('');
+                $("#charPrefectoRangoEdad").html('');
+                $("#charJuntaRangoEdad").html('');
+                $("#contenedorTablaAlcaldeRangoEdad").html('');
+                $("#contenedorTablaConcejalRangoEdad").html('');
+                $("#contenedorTablaPrefectoRangoEdad").html('');
+                $("#contenedorTablaJuntaRangoEdad").html('');
+                 $("#preguntaAlcaldeRangoEdad").html('');
+                $("#preguntaConcejalRangoEdad").html('');
+                $("#preguntaPrefectoRangoEdad").html('');
+                $("#preguntaJuntaRangoEdad").html('');
+                if(xhr.status === 0){
+                    $("#mensajeResultadodPorRangoEdad").html('<div class="alert alert-danger text-center" role="alert">NO HAY CONEXIÓN A INTERNET </div>');
+                }else if(xhr.status == 404){
+                    $("#mensajeResultadodPorRangoEdad").html('<div class="alert alert-danger text-center" role="alert">PÁGINA NO ENCONTRADA ERROR. [404]</div>');
+                }else if(xhr.status == 500){
+                    $("#mensajeResultadodPorRangoEdad").html('<div class="alert alert-danger text-center" role="alert">ERROR DEL SERVIDOR [500]</div>');
+                }else if(errorThrown === 'parsererror'){
+                    $("#mensajeResultadodPorRangoEdad").html('<div class="alert alert-danger text-center" role="alert">Requested JSON parse failed</div>');
+                }else if(errorThrown === 'timeout'){
+                    $("#mensajeResultadodPorRangoEdad").html('<div class="alert alert-danger text-center" role="alert">Time out error</div>');
+                }else if(errorThrown === 'abort'){
+                    $("#mensajeResultadodPorRangoEdad").html('<div class="alert alert-danger text-center" role="alert">Ajax request aborted</div>');
+                }else{
+                    $("#mensajeResultadodPorRangoEdad").html('<div class="alert alert-danger text-center" role="alert">OCURRIÓ UN ERROR INESPERADO</div>');
+                }
+            },
+            complete: function() {
+            }
+        });
+    }
+}
+</script>
+<script type="text/javascript">
+function filtrarResultadoPorParroquia(){
+    var idParroquiaEncriptado = $("#selectParroquia").val();
+    if(idParroquiaEncriptado == 0){
+        $("#mensajeResultadodPorParroquia").html('');
+        $("#tituloAlcaldeSectorUrbano").html('');
+        $("#tituloAlcaldeSectorRural").html('');
+        $("#tituloConcejalSectorUrbano").html('');
+        $("#tituloConcejalSectorRural").html('');
+        $("#tituloPrefectoSectorUrbano").html('');
+        $("#tituloPrefectoSectorRural").html('');
+        $("#tituloJuntaSectorUrbano").html('');
+        $("#tituloJuntaSectorRural").html('');
+        $("#charAlcaldeParroquiaSectorUrbano").html('');
+        $("#charAlcaldeParroquiaSectorRural").html('');
+        $("#charConcejalParroquiaSectorUrbano").html('');
+        $("#charConcejalParroquiaSectorRural").html('');
+        $("#charPrefectoParroquiaSectorUrbano").html('');
+        $("#charPrefectoParroquiaSectorRural").html('');
+        $("#charJuntaParroquiaSectorUrbano").html('');
+        $("#charJuntaParroquiaSectorRural").html('');
+        $("#contenedorTablaAlcaldeParroquia").html('');
+        $("#contenedorTablaConcejalParroquia").html('');
+        $("#contenedorTablaPrefectoParroquia").html('');
+        $("#contenedorTablaJuntaParroquia").html('');
+         $("#preguntaAlcaldeParroquia").html('');
+        $("#preguntaConcejalParroquia").html('');
+        $("#preguntaPrefectoParroquia").html('');
+        $("#preguntaJuntaParroquia").html('');
+    }else {
+        $.ajax({
+            url : '<?php echo $this->basePath();?>/resultados/filtrarresultadoporparroquia',
+            type: 'post',
+            dataType: 'JSON',
+            data : {idParroquiaEncriptado:idParroquiaEncriptado},
+            beforeSend : function() {
+                $("#tituloAlcaldeSectorUrbano").html('');
+                $("#tituloAlcaldeSectorRural").html('');
+                $("#tituloConcejalSectorUrbano").html('');
+                $("#tituloConcejalSectorRural").html('');
+                $("#tituloPrefectoSectorUrbano").html('');
+                $("#tituloPrefectoSectorRural").html('');
+                $("#tituloJuntaSectorUrbano").html('');
+                $("#tituloJuntaSectorRural").html('');
+                cargandoResultados("charAlcaldeParroquiaSectorUrbano");
+                cargandoResultados("charAlcaldeParroquiaSectorRural");
+                cargandoResultados("charConcejalParroquiaSectorUrbano");
+                cargandoResultados("charConcejalParroquiaSectorRural");
+                cargandoResultados("charPrefectoParroquiaSectorUrbano");
+                cargandoResultados("charPrefectoParroquiaSectorRural");
+                cargandoResultados("charJuntaParroquiaSectorUrbano");
+                cargandoResultados("charJuntaParroquiaSectorRural");
+                cargandoResultados("contenedorTablaAlcaldeParroquia");
+                cargandoResultados("contenedorTablaConcejalParroquia");
+                cargandoResultados("contenedorTablaPrefectoParroquia");
+                cargandoResultados("contenedorTablaJuntaParroquia");
+                $("#mensajeResultadodPorParroquia").html('');
+                $("#preguntaAlcaldeParroquia").html('');
+                $("#preguntaConcejalParroquia").html('');
+                $("#preguntaPrefectoParroquia").html('');
+                $("#preguntaJuntaParroquia").html('');
+
+            },
+            success: function(data, status){ 
+                if(data.validar == true)
+                {
+                    $("#tituloAlcaldeSectorUrbano").html('<h4>SECTOR URBANO</h4>');
+                    $("#tituloAlcaldeSectorRural").html('<h4>SECTOR RURAL</h4>');
+                    if(data.preguntaConcejal != ""){
+                        $("#tituloConcejalSectorUrbano").html('<h4>SECTOR URBANO</h4>');
+                        $("#tituloConcejalSectorRural").html('<h4>SECTOR RURAL</h4>');
+                    }
+                    $("#tituloPrefectoSectorUrbano").html('<h4>SECTOR URBANO</h4>');
+                    $("#tituloPrefectoSectorRural").html('<h4>SECTOR RURAL</h4>');
+                    $("#tituloJuntaSectorUrbano").html('<h4>SECTOR URBANO</h4>');
+                    $("#tituloJuntaSectorRural").html('<h4>SECTOR RURAL</h4>');
+                    $("#charAlcaldeParroquiaSectorUrbano").html('');
+                    $("#charAlcaldeParroquiaSectorRural").html('');
+                    $("#charConcejalParroquiaSectorUrbano").html('');
+                    $("#charConcejalParroquiaSectorRural").html('');
+                    $("#charPrefectoParroquiaSectorUrbano").html('');
+                    $("#charPrefectoParroquiaSectorRural").html('');
+                    $("#charJuntaParroquiaSectorUrbano").html('');
+                    $("#charJuntaParroquiaSectorRural").html('');
+                    $("#preguntaAlcaldeParroquia").html('<h3>'+data.preguntaAlcalde+'</h3>');
+                    $("#preguntaConcejalParroquia").html('<h3>'+data.preguntaConcejal+'</h3>');
+                    $("#preguntaPrefectoParroquia").html('<h3>'+data.preguntaPrefecto+'</h3>');
+                    $("#preguntaJuntaParroquia").html('<h3>'+data.preguntaJunta+'</h3>');
+                    $("#contenedorTablaAlcaldeParroquia").html(data.tablaAlcalde);
+                    $("#contenedorTablaConcejalParroquia").html(data.tablaConcejal);
+                    $("#contenedorTablaPrefectoParroquia").html(data.tablaPrefecto);
+                    $("#contenedorTablaJuntaParroquia").html(data.tablaJunta);
+                    new Morris.Donut({
+                        element: 'charAlcaldeParroquiaSectorUrbano',
+                        data : data.charAlcalde,
+                        formatter: function (value, data) { return (value.toFixed(2)) + '%'; },
+                        resize: true,
+                        colors: ["red","orange","blue","green"],
+                        hideHover: 'auto'
+                     });
+                    new Morris.Donut({
+                        element: 'charAlcaldeParroquiaSectorRural',
+                        data : data.charAlcaldeRural,
+                        formatter: function (value, data) { return (value.toFixed(2)) + '%'; },
+                        resize: true,
+                        colors: ["red","orange","blue","green"],
+                        hideHover: 'auto'
+                     });
+                     
+                     
+                    new Morris.Donut({
+                        element: 'charConcejalParroquiaSectorUrbano',
+                        data : data.charConcejal,
+                        formatter: function (value, data) { return (value.toFixed(2)) + '%'; },
+                           resize: true,
+                           colors: ["red","orange","blue","green"],
+                        hideHover: 'auto'
+                     });
+                     new Morris.Donut({
+                        element: 'charConcejalParroquiaSectorRural',
+                        data : data.charConcejalRural,
+                        formatter: function (value, data) { return (value.toFixed(2)) + '%'; },
+                           resize: true,
+                           colors: ["red","orange","blue","green"],
+                        hideHover: 'auto'
+                     });
+                     new Morris.Donut({
+                        element: 'charPrefectoParroquiaSectorUrbano',
+                        data : data.charPrefecto,
+                        formatter: function (value, data) { return (value.toFixed(2)) + '%'; },
+                           resize: true,
+                           colors: ["red","orange","blue","green"],
+                        hideHover: 'auto'
+                     });
+                     new Morris.Donut({
+                        element: 'charPrefectoParroquiaSectorRural',
+                        data : data.charPrefectoRural,
+                        formatter: function (value, data) { return (value.toFixed(2)) + '%'; },
+                           resize: true,
+                           colors: ["red","orange","blue","green"],
+                        hideHover: 'auto'
+                     });
+                     new Morris.Donut({
+                        element: 'charJuntaParroquiaSectorUrbano',
+                        data : data.charJunta,
+                        formatter: function (value, data) { return (value.toFixed(2)) + '%'; },
+                           resize: true,
+                           colors: ["red","orange","blue","green"],
+                        hideHover: 'auto'
+                     });
+                     new Morris.Donut({
+                        element: 'charJuntaParroquiaSectorRural',
+                        data : data.charJuntaRural,
+                        formatter: function (value, data) { return (value.toFixed(2)) + '%'; },
+                           resize: true,
+                           colors: ["red","orange","blue","green"],
+                        hideHover: 'auto'
+                     });
+                     
+                     
+                }else{
+                    $("#tituloAlcaldeSectorUrbano").html('');
+                    $("#tituloAlcaldeSectorRural").html('');
+                    $("#tituloConcejalSectorUrbano").html('');
+                    $("#tituloConcejalSectorRural").html('');
+                    $("#tituloPrefectoSectorUrbano").html('');
+                    $("#tituloPrefectoSectorRural").html('');
+                    $("#tituloJuntaSectorUrbano").html('');
+                    $("#tituloJuntaSectorRural").html('');
+                    $("#preguntaAlcaldeParroquia").html('');
+                    $("#preguntaConcejalParroquia").html('');
+                    $("#preguntaPrefectoParroquia").html('');
+                    $("#preguntaJuntaParroquia").html('');
+                    $("#charAlcaldeParroquiaSectorUrbano").html('');
+                    $("#charAlcaldeParroquiaSectorRural").html('');
+                    $("#charConcejalParroquiaSectorUrbano").html('');
+                    $("#charConcejalParroquiaSectorRural").html('');
+                    $("#charPrefectoParroquiaSectorUrbano").html('');
+                    $("#charPrefectoParroquiaSectorRural").html('');
+                    $("#charJuntaParroquiaSectorUrbano").html('');
+                    $("#charJuntaParroquiaSectorRural").html('');
+                    $("#contenedorTablaAlcaldeParroquia").html('');
+                    $("#contenedorTablaConcejalParroquia").html('');
+                    $("#contenedorTablaPrefectoParroquia").html('');
+                    $("#contenedorTablaJuntaParroquia").html('');
+                    $("#mensajeResultadodPorParroquia").html(data.mensaje);
+                }
+            },
+            error: function(xhr, textStatus, errorThrown) {
+                $("#tituloAlcaldeSectorUrbano").html('');
+                $("#tituloAlcaldeSectorRural").html('');
+                $("#tituloConcejalSectorUrbano").html('');
+                $("#tituloConcejalSectorRural").html('');
+                $("#tituloPrefectoSectorUrbano").html('');
+                $("#tituloPrefectoSectorRural").html('');
+                $("#tituloJuntaSectorUrbano").html('');
+                $("#tituloJuntaSectorRural").html('');
+                $("#charAlcaldeParroquiaSectorUrbano").html('');
+                $("#charAlcaldeParroquiaSectorRural").html('');
+                $("#charConcejalParroquiaSectorUrbano").html('');
+                $("#charConcejalParroquiaSectorRural").html('');
+                $("#charPrefectoParroquiaSectorUrbano").html('');
+                $("#charPrefectoParroquiaSectorRural").html('');
+                $("#charJuntaParroquiaSectorUrbano").html('');
+                $("#charJuntaParroquiaSectorRural").html('');
+                $("#contenedorTablaAlcaldeParroquia").html('');
+                $("#contenedorTablaConcejalParroquia").html('');
+                $("#contenedorTablaPrefectoParroquia").html('');
+                $("#contenedorTablaJuntaParroquia").html('');
+                 $("#preguntaAlcaldeParroquia").html('');
+                $("#preguntaConcejalParroquia").html('');
+                $("#preguntaPrefectoParroquia").html('');
+                $("#preguntaJuntaParroquia").html('');
+                if(xhr.status === 0){
+                    $("#mensajeResultadodPorParroquia").html('<div class="alert alert-danger text-center" role="alert">NO HAY CONEXIÓN A INTERNET </div>');
+                }else if(xhr.status == 404){
+                    $("#mensajeResultadodPorParroquia").html('<div class="alert alert-danger text-center" role="alert">PÁGINA NO ENCONTRADA ERROR. [404]</div>');
+                }else if(xhr.status == 500){
+                    $("#mensajeResultadodPorParroquia").html('<div class="alert alert-danger text-center" role="alert">ERROR DEL SERVIDOR [500]</div>');
+                }else if(errorThrown === 'parsererror'){
+                    $("#mensajeResultadodPorParroquia").html('<div class="alert alert-danger text-center" role="alert">Requested JSON parse failed</div>');
+                }else if(errorThrown === 'timeout'){
+                    $("#mensajeResultadodPorParroquia").html('<div class="alert alert-danger text-center" role="alert">Time out error</div>');
+                }else if(errorThrown === 'abort'){
+                    $("#mensajeResultadodPorParroquia").html('<div class="alert alert-danger text-center" role="alert">Ajax request aborted</div>');
+                }else{
+                    $("#mensajeResultadodPorParroquia").html('<div class="alert alert-danger text-center" role="alert">OCURRIÓ UN ERROR INESPERADO</div>');
+                }
+            },
+            complete: function() {
+            }
+        });
+    }
+}
+</script>
+
+
+<script type="text/javascript">
+function filtrarResultadoPorSector(){
+    var idSectorEncriptado = $("#selectSector").val();
+    if(idSectorEncriptado == 0){
+        $("#mensajeResultadodPorSector").html('');
+        $("#charAlcaldeSector").html('');
+        $("#charConcejalSector").html('');
+        $("#charPrefectoSector").html('');
+        $("#charJuntaSector").html('');
+        $("#contenedorTablaAlcaldeSector").html('');
+        $("#contenedorTablaConcejalSector").html('');
+        $("#contenedorTablaPrefectoSector").html('');
+        $("#contenedorTablaJuntaSector").html('');
+         $("#preguntaAlcaldeSector").html('');
+        $("#preguntaConcejalSector").html('');
+        $("#preguntaPrefectoSector").html('');
+        $("#preguntaJuntaSector").html('');
+    }else {
+        $.ajax({
+            url : '<?php echo $this->basePath();?>/resultados/filtrarresultadoporsector',
+            type: 'post',
+            dataType: 'JSON',
+            data : {idSectorEncriptado:idSectorEncriptado},
+            beforeSend : function() {
+                cargandoResultados("charAlcaldeSector");
+                cargandoResultados("charConcejalSector");
+                cargandoResultados("charPrefectoSector");
+                cargandoResultados("charJuntaSector");
+                cargandoResultados("contenedorTablaAlcaldeSector");
+                cargandoResultados("contenedorTablaConcejalSector");
+                cargandoResultados("contenedorTablaPrefectoSector");
+                cargandoResultados("contenedorTablaJuntaSector");
+                $("#mensajeResultadodPorSector").html('');
+                $("#preguntaAlcaldeSector").html('');
+                $("#preguntaConcejalSector").html('');
+                $("#preguntaPrefectoSector").html('');
+                $("#preguntaJuntaSector").html('');
+
+            },
+            success: function(data, status){ 
+                console.log(data)
+                if(data.validar == true)
+                {
+                    $("#charAlcaldeSector").html('');
+                    $("#charConcejalSector").html('');
+                    $("#charPrefectoSector").html('');
+                    $("#charJuntaSector").html('');
+                    $("#preguntaAlcaldeSector").html('<h3>'+data.preguntaAlcalde+'</h3>');
+                    $("#preguntaConcejalSector").html('<h3>'+data.preguntaConcejal+'</h3>');
+                    $("#preguntaPrefectoSector").html('<h3>'+data.preguntaPrefecto+'</h3>');
+                    $("#preguntaJuntaSector").html('<h3>'+data.preguntaJunta+'</h3>');
+                    $("#contenedorTablaAlcaldeSector").html(data.tablaAlcalde);
+                    $("#contenedorTablaConcejalSector").html(data.tablaConcejal);
+                    $("#contenedorTablaPrefectoSector").html(data.tablaPrefecto);
+                    $("#contenedorTablaJuntaSector").html(data.tablaJunta);
+                    new Morris.Donut({
+                        element: 'charAlcaldeSector',
+                        data : data.charAlcalde,
+                        formatter: function (value, data) { return (value.toFixed(2)) + '%'; },
+                           resize: true,
+                           colors: ["red","orange","blue","green"],
+                        hideHover: 'auto'
+                     });
+
+                    new Morris.Donut({
+                        element: 'charConcejalSector',
+                        data : data.charConcejal,
+                        formatter: function (value, data) { return (value.toFixed(2)) + '%'; },
+                           resize: true,
+                           colors: ["red","orange","blue","green"],
+                        hideHover: 'auto'
+                     });
+                     new Morris.Donut({
+                        element: 'charPrefectoSector',
+                        data : data.charPrefecto,
+                        formatter: function (value, data) { return (value.toFixed(2)) + '%'; },
+                           resize: true,
+                           colors: ["red","orange","blue","green"],
+                        hideHover: 'auto'
+                     });
+                     new Morris.Donut({
+                        element: 'charJuntaSector',
+                        data : data.charJunta,
+                        formatter: function (value, data) { return (value.toFixed(2)) + '%'; },
+                           resize: true,
+                           colors: ["red","orange","blue","green"],
+                        hideHover: 'auto'
+                     });
+                }else{     
+                    $("#preguntaAlcaldeSector").html('');
+                    $("#preguntaConcejalSector").html('');
+                    $("#preguntaPrefectoSector").html('');
+                    $("#preguntaJuntaSector").html('');
+                    $("#charAlcaldeSector").html('');
+                    $("#charConcejalSector").html('');
+                    $("#charPrefectoSector").html('');
+                    $("#charJuntaSector").html('');
+                    $("#contenedorTablaAlcaldeSector").html('');
+                    $("#contenedorTablaConcejalSector").html('');
+                    $("#contenedorTablaPrefectoSector").html('');
+                    $("#contenedorTablaJuntaSector").html('');
+                    $("#mensajeResultadodPorSector").html(data.mensaje);
+                }
+            },
+            error: function(xhr, textStatus, errorThrown) {
+                $("#charAlcaldeSector").html('');
+                $("#charConcejalSector").html('');
+                $("#charPrefectoSector").html('');
+                $("#charJuntaSector").html('');
+                $("#contenedorTablaAlcaldeSector").html('');
+                $("#contenedorTablaConcejalSector").html('');
+                $("#contenedorTablaPrefectoSector").html('');
+                $("#contenedorTablaJuntaSector").html('');
+                 $("#preguntaAlcaldeSector").html('');
+                $("#preguntaConcejalSector").html('');
+                $("#preguntaPrefectoSector").html('');
+                $("#preguntaJuntaSector").html('');
+                if(xhr.status === 0){
+                    $("#mensajeResultadodPorSector").html('<div class="alert alert-danger text-center" role="alert">NO HAY CONEXIÓN A INTERNET </div>');
+                }else if(xhr.status == 404){
+                    $("#mensajeResultadodPorSector").html('<div class="alert alert-danger text-center" role="alert">PÁGINA NO ENCONTRADA ERROR. [404]</div>');
+                }else if(xhr.status == 500){
+                    $("#mensajeResultadodPorSector").html('<div class="alert alert-danger text-center" role="alert">ERROR DEL SERVIDOR [500]</div>');
+                }else if(errorThrown === 'parsererror'){
+                    $("#mensajeResultadodPorSector").html('<div class="alert alert-danger text-center" role="alert">Requested JSON parse failed</div>');
+                }else if(errorThrown === 'timeout'){
+                    $("#mensajeResultadodPorSector").html('<div class="alert alert-danger text-center" role="alert">Time out error</div>');
+                }else if(errorThrown === 'abort'){
+                    $("#mensajeResultadodPorSector").html('<div class="alert alert-danger text-center" role="alert">Ajax request aborted</div>');
+                }else{
+                    $("#mensajeResultadodPorSector").html('<div class="alert alert-danger text-center" role="alert">OCURRIÓ UN ERROR INESPERADO</div>');
+                }
+            },
+            complete: function() {
+            }
+        });
+    }
+}
+</script>
+<script type="text/javascript">
+function filtrarResultadoPorCandidatura(){
+    $.ajax({
+        url : '<?php echo $this->basePath();?>/resultados/filtrarresultadoporcandidatura',
+        type: 'post',
+        dataType: 'JSON',
+        beforeSend : function() {
+            cargandoResultados("charPorCandidaturaAlcalde");
+            cargandoResultados("charPorCandidaturaConcejal");
+            cargandoResultados("charPorCandidaturaPrefecto");
+            cargandoResultados("charPorCandidaturaJunta");
+            cargandoResultados("contenedorTablaAlcalde");
+            cargandoResultados("contenedorTablaConcejal");
+            cargandoResultados("contenedorTablaPrefecto");
+            cargandoResultados("contenedorTablaJunta");
+            $("#mensajeResultadodPorCandidatura").html('');
+            $("#preguntaAlcalde").html('');
+            $("#preguntaConcejal").html('');
+            $("#preguntaPrefecto").html('');
+            $("#preguntaJunta").html('');
+            
+        },
+        success: function(data, status){ 
+            if(data.validar == true)
+            {
+                $("#charPorCandidaturaAlcalde").html('');
+                $("#charPorCandidaturaConcejal").html('');
+                $("#charPorCandidaturaPrefecto").html('');
+                $("#charPorCandidaturaJunta").html('');
+                $("#preguntaAlcalde").html('<h3>'+data.preguntaAlcalde+'</h3>');
+                $("#preguntaConcejal").html('<h3>'+data.preguntaConcejal+'</h3>');
+                $("#preguntaPrefecto").html('<h3>'+data.preguntaPrefecto+'</h3>');
+                $("#preguntaJunta").html('<h3>'+data.preguntaJunta+'</h3>');
+                $("#contenedorTablaAlcalde").html(data.tablaAlcalde);
+                $("#contenedorTablaConcejal").html(data.tablaConcejal);
+                $("#contenedorTablaPrefecto").html(data.tablaPrefecto);
+                $("#contenedorTablaJunta").html(data.tablaJunta);
+                new Morris.Donut({
+                    element: 'charPorCandidaturaAlcalde',
+                    data : data.charAlcalde,
+                    formatter: function (value, data) { return (value.toFixed(2)) + '%'; },
+                    resize: true,
+                    colors: ["red","orange","blue","green"],
+                    hideHover: 'auto'
+                 });
+               
+                new Morris.Donut({
+                    element: 'charPorCandidaturaConcejal',
+                    data : data.charConcejal,
+                    formatter: function (value, data) { return (value.toFixed(2)) + '%'; },
+                    resize: true,
+                    colors: ["red","orange","blue","green"],
+                    hideHover: 'auto'
+                 });
+                 new Morris.Donut({
+                    element: 'charPorCandidaturaPrefecto',
+                    data : data.charPrefecto,
+                    formatter: function (value, data) { return (value.toFixed(2)) + '%'; },
+                    resize: true,
+                    colors: ["red","orange","blue","green"],
+                    hideHover: 'auto'
+                 });
+                 new Morris.Donut({
+                    element: 'charPorCandidaturaJunta',
+                    data : data.charJunta,
+                    formatter: function (value, data) { return (value.toFixed(2)) + '%'; },
+                    resize: true,
+                    colors: ["red","orange","blue","green"],
+                    hideHover: 'auto'
+                 });
+            }else{     
+                $("#preguntaAlcalde").html('');
+                $("#preguntaConcejal").html('');
+                $("#preguntaPrefecto").html('');
+                $("#preguntaJunta").html('');
+                $("#charPorCandidaturaAlcalde").html('');
+                $("#charPorCandidaturaConcejal").html('');
+                $("#charPorCandidaturaPrefecto").html('');
+                $("#charPorCandidaturaJunta").html('');
+                $("#contenedorTablaAlcalde").html('');
+                $("#contenedorTablaConcejal").html('');
+                $("#contenedorTablaPrefecto").html('');
+                $("#contenedorTablaJunta").html('');
+                $("#mensajeResultadodPorCandidatura").html(data.mensaje);
+            }
+        },
+        error: function(xhr, textStatus, errorThrown) {
+            $("#charPorCandidaturaAlcalde").html('');
+            $("#charPorCandidaturaConcejal").html('');
+            $("#charPorCandidaturaPrefecto").html('');
+            $("#charPorCandidaturaJunta").html('');
+            $("#contenedorTablaAlcalde").html('');
+            $("#contenedorTablaConcejal").html('');
+            $("#contenedorTablaPrefecto").html('');
+            $("#contenedorTablaJunta").html('');
+             $("#preguntaAlcalde").html('');
+            $("#preguntaConcejal").html('');
+            $("#preguntaPrefecto").html('');
+            $("#preguntaJunta").html('');
+            if(xhr.status === 0){
+                $("#mensajeResultadodPorCandidatura").html('<div class="alert alert-danger text-center" role="alert">NO HAY CONEXIÓN A INTERNET </div>');
+            }else if(xhr.status == 404){
+                $("#mensajeResultadodPorCandidatura").html('<div class="alert alert-danger text-center" role="alert">PÁGINA NO ENCONTRADA ERROR. [404]</div>');
+            }else if(xhr.status == 500){
+                $("#mensajeResultadodPorCandidatura").html('<div class="alert alert-danger text-center" role="alert">ERROR DEL SERVIDOR [500]</div>');
+            }else if(errorThrown === 'parsererror'){
+                $("#mensajeResultadodPorCandidatura").html('<div class="alert alert-danger text-center" role="alert">Requested JSON parse failed</div>');
+            }else if(errorThrown === 'timeout'){
+                $("#mensajeResultadodPorCandidatura").html('<div class="alert alert-danger text-center" role="alert">Time out error</div>');
+            }else if(errorThrown === 'abort'){
+                $("#mensajeResultadodPorCandidatura").html('<div class="alert alert-danger text-center" role="alert">Ajax request aborted</div>');
+            }else{
+                $("#mensajeResultadodPorCandidatura").html('<div class="alert alert-danger text-center" role="alert">OCURRIÓ UN ERROR INESPERADO</div>');
+            }
+        },
+        complete: function() {
+        }
+    });
+}
+</script> 
+
+<script type="text/javascript">
+    function cargandoResultados(contenedor){
+        $("#"+contenedor).html('<div class="text-center"><img style="width: 10%;" src="<?php echo $this->basePath(); ?>/public/images/otras/cargando.gif" /></div>')
+        
+    }
+</script>

@@ -1,0 +1,194 @@
+
+
+<div class="content-wrapper" style="min-height: 1123px;">
+    <br><br>
+    <section class="content-header">
+        <h1>
+            ENCUESTA
+            <small>Nel-Latino</small>
+        </h1>
+    </section>
+    <section class="content">
+        <div class="box-body">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="col-lg-12">
+                        <h2 class="title text-center" style="font-family: fantasy;">ELECCIONES SECCIONALES 2019</h2>
+                    </div>
+                    <div class="col-lg-12" id="mensajeEncuesta"></div>
+                    <form onKeypress="if(event.keyCode == 13) event.returnValue = false;"  onsubmit="return validarIngresoEncuesta(this)" id="formIngresarEncuesta" method="post" action="<?php echo $this->basePath();?>/encuesta/ingresarencuesta"> 
+                        <div id="contenedorEncuesta" class="col-lg-12 box">
+
+                        </div>
+                        <div id="contenedorCuerpoEncuesta" class="col-lg-12 box">
+
+                        </div>
+                    </form>
+                    <div class="col-lg-12" id="mensajeFormIngresarEncuesta"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<!--<script type="text/javascript">
+function mayus(e) {
+    e.value = e.value.toUpperCase();
+}
+</script>
+<script type="text/javascript">
+function validarIngresoEncuesta(f){
+    var _validar = false;
+    if(confirm("¿ESTAS SEGURO DE GUARDAR LA ENCUESTA?")){
+        _validar = true;
+    }
+    return _validar;
+}
+function limpiarFormIngresarEncuesta()
+{
+    setTimeout(function() {$("#mensajeFormIngresarEncuesta").html('');},1500);
+}
+$(function(){
+    $("#formIngresarEncuesta").ajaxForm({
+        beforeSend: function(){
+            $("#mensajeFormIngresarEncuesta").html('');
+            $("#botonGuardarEncuesta").button('loading');
+        },
+        uploadProgress: function(event,position,total,percentComplete){
+        },
+        success: function(data){
+            if(data.validar==true){
+                limpiarFormIngresarEncuesta();
+                obtenerEncuesta();
+            }else{
+                $("#botonGuardarEncuesta").button('reset');
+            }
+            $("#mensajeFormIngresarEncuesta").html(data.mensaje);
+        },
+        complete: function(){
+        },
+        error: function(xhr, textStatus, errorThrown) {
+            $("#botonGuardarEncuesta").button('reset');
+            if(xhr.status === 0){
+                $("#mensajeFormIngresarEncuesta").html('<div class="alert alert-danger text-center" role="alert">NO HAY CONEXIÓN A INTERNET </div>');
+            }else if(xhr.status == 404){
+                $("#mensajeFormIngresarEncuesta").html('<div class="alert alert-danger text-center" role="alert">P�?GINA NO ENCONTRADA ERROR. [404]</div>');
+            }else if(xhr.status == 500){
+                $("#mensajeFormIngresarEncuesta").html('<div class="alert alert-danger text-center" role="alert">ERROR DEL SERVIDOR [500]</div>');
+            }else if(errorThrown === 'parsererror'){
+                $("#mensajeFormIngresarEncuesta").html('<div class="alert alert-danger text-center" role="alert">Requested JSON parse failed</div>');
+            }else if(errorThrown === 'timeout'){
+                $("#mensajeFormIngresarEncuesta").html('<div class="alert alert-danger text-center" role="alert">Time out error</div>');
+            }else if(errorThrown === 'abort'){
+                $("#mensajeFormIngresarEncuesta").html('<div class="alert alert-danger text-center" role="alert">Ajax request aborted</div>');
+            }else{
+                $("#mensajeFormIngresarEncuesta").html('<div class="alert alert-danger text-center" role="alert">OCURRIÓ UN ERROR INESPERADO</div>');
+            }
+        }
+    });    
+});    
+</script>
+
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        cargandoEncuesta("contenedorEncuesta");
+        obtenerEncuesta();
+    });
+</script>
+<script type="text/javascript">
+    function cargandoEncuesta(contenedor){
+        $("#"+contenedor).html('<div class="text-center"><img style="width: 10%;" src="<?php echo $this->basePath(); ?>/public/images/otras/cargando.gif" /></div>')
+        
+    }
+    function filtrarCuerpoEncuesta(ID){
+        $("#mensajeFormIngresarEncuesta").html('');
+        if(ID == "" || ID == null){
+            $("#contenedorCuerpoEncuesta").html('');
+        }else{
+            $.ajax({
+                url : '<?php echo $this->basePath();?>/encuesta/filtrarcuerpoencuesta',
+                type: 'post',
+                dataType: 'JSON',
+                data: {idParroquiaEncriptado: ID},
+                beforeSend: function(){
+                    cargandoEncuesta("contenedorCuerpoEncuesta");
+                },
+                uploadProgress: function(event,position,total,percentComplete){
+                },
+                success: function(data){  
+                    if(data.validar == true){
+                        $("#contenedorCuerpoEncuesta").html(data.tabla);
+                    }else{
+                        $("#contenedorCuerpoEncuesta").html(data.mensaje);
+                    }
+                },
+                complete: function(){
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    $("#contenedorCuerpoEncuesta").html('');
+                    if(xhr.status === 0){
+                        $("#contenedorCuerpoEncuesta").html('<div class="alert alert-danger text-center" role="alert">NO HAY CONEXIÓN A INTERNET. VERIFICA LA RED</div>');
+                    }else if(xhr.status == 404){
+                        $("#contenedorCuerpoEncuesta").html('<div class="alert alert-danger text-center" role="alert">ERROR [404]. P�?GINA NO ENCONTRADA</div>');
+                    }else if(xhr.status == 500){
+                        $("#contenedorCuerpoEncuesta").html('<div class="alert alert-danger text-center" role="alert">ERROR DEL SERVIDOR [500]</div>');
+                    }else if(errorThrown === 'parsererror'){
+                        $("#contenedorCuerpoEncuesta").html('<div class="alert alert-danger text-center" role="alert">LA PETICIÓN JSON HA FALLADO </div>');
+                    }else if(errorThrown === 'timeout'){
+                        $("#contenedorCuerpoEncuesta").html('<div class="alert alert-danger text-center" role="alert">TIEMPO DE ESPERA TERMINADO</div>');
+                    }else if(errorThrown === 'abort'){
+                        $("#contenedorCuerpoEncuesta").html('<div class="alert alert-danger text-center" role="alert">LA PETICIÓN AJAX FUE ABORTADA</div>');
+                    }else{
+                        $("#contenedorCuerpoEncuesta").html('<div class="alert alert-danger text-center" role="alert">OCURRIÓ UN ERROR INESPERADO</div>');
+                    }
+                }
+            }); 
+        }
+    }
+</script>
+<script type="text/javascript">
+    function obtenerEncuesta(){
+        $("#mensajeFormIngresarEncuesta").html('');
+        $("#contenedorCuerpoEncuesta").html('');
+        $.ajax({
+            url : '<?php echo $this->basePath();?>/encuesta/obtenerencuesta',
+            type: 'post',
+            dataType: 'JSON',
+            beforeSend: function(){
+                $("#mensajeEncuesta").html('');
+                cargandoEncuesta("contenedorEncuesta");
+            },
+            uploadProgress: function(event,position,total,percentComplete){
+            },
+            success: function(data){  
+                if(data.validar == true){
+                    $("#contenedorEncuesta").html(data.tabla);
+                }else{
+                    $("#contenedorEncuesta").html('');
+                }
+                $("#mensajeEncuesta").html(data.mensaje);
+            },
+            complete: function(){
+            },
+            error: function(xhr, textStatus, errorThrown) {
+                $("#contenedorEncuesta").html('');
+                if(xhr.status === 0){
+                    $("#mensajeEncuesta").html('<div class="alert alert-danger text-center" role="alert">NO HAY CONEXIÓN A INTERNET. VERIFICA LA RED</div>');
+                }else if(xhr.status == 404){
+                    $("#mensajeEncuesta").html('<div class="alert alert-danger text-center" role="alert">ERROR [404]. P�?GINA NO ENCONTRADA</div>');
+                }else if(xhr.status == 500){
+                    $("#mensajeEncuesta").html('<div class="alert alert-danger text-center" role="alert">ERROR DEL SERVIDOR [500]</div>');
+                }else if(errorThrown === 'parsererror'){
+                    $("#mensajeEncuesta").html('<div class="alert alert-danger text-center" role="alert">LA PETICIÓN JSON HA FALLADO </div>');
+                }else if(errorThrown === 'timeout'){
+                    $("#mensajeEncuesta").html('<div class="alert alert-danger text-center" role="alert">TIEMPO DE ESPERA TERMINADO</div>');
+                }else if(errorThrown === 'abort'){
+                    $("#mensajeEncuesta").html('<div class="alert alert-danger text-center" role="alert">LA PETICIÓN AJAX FUE ABORTADA</div>');
+                }else{
+                    $("#mensajeEncuesta").html('<div class="alert alert-danger text-center" role="alert">OCURRIÓ UN ERROR INESPERADO</div>');
+                }
+            }
+        }); 
+    }
+</script>
+-->
