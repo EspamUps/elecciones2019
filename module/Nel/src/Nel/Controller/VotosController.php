@@ -488,7 +488,7 @@ class VotosController extends AbstractActionController
                     $listaListas = $this->dbAdapter->query("SELECT DISTINCT listas.* FROM candidatos
                         INNER JOIN listas on candidatos.idListaCandidato = listas.idLista
                         where candidatos.idTipoCandidato=$idTipoCandidato",Adapter::QUERY_MODE_EXECUTE)->toArray();
-                          $optionListasCandidatos='<option value="0">SELECCIONE UNA JUNTA</option>';
+                          $optionListasCandidatos='<option value="0">SELECCIONE UNA LISTA</option>';
                          foreach ($listaListas as $valueListasC) {
                                $optionListasCandidatos=$optionListasCandidatos.'<option value="'.$valueListasC['idLista'].'">'.$valueListasC['numeroLista'].' - '.$valueListasC['nombreLista'].'</option>'; 
                             }
