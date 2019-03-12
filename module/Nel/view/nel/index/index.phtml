@@ -146,12 +146,12 @@ $optionJunta =$this->optionJunta;
         if(idTipoCandidato=="0")
         {
             $('#mensajeFormIngresarDatos').html("");
-            $('#contenedorFormularioVotos').html("<div class='alert alert-default text-center' role='alert'>SELECCIONE UN TIPO DE CANDIDATO</div>");
+            $('#contenedorFormularioVotos').html("");
         } 
         else if (idConfigurarJunta=="0")
         {            
             $('#mensajeFormIngresarDatos').html("");
-            $('#selectJuntas').html("<option value='0'>SELECCIONE UNA JUNTA</option>");
+            $('#contenedorFormularioVotos').html("");
         }
         else{
             $.ajax({
@@ -202,6 +202,8 @@ $optionJunta =$this->optionJunta;
         if(idTipoCandidato=="0")
         {
             $('#mensajeFormIngresarDatos').html("");
+             $('#contenedorFormularioVotos').html("");
+             $('#selectListaCandidato').html('<option value="0">SELECCIONE UNA LISTA</option>');
         } 
         else{
             $.ajax({
