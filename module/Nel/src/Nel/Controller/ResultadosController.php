@@ -121,10 +121,23 @@ class ResultadosController extends AbstractActionController
         
         $titulo ="";
         $tipoCandidato='';
+        $totalVotos=0;
         if($idParroquia == "0" && $idSexo == "0" && $idConfigurarJunta == "0"){
             $tipoCandidato = '<h1 style="text-align:center; color:">'.$descripcionTipoCandidato.'</h1>';
             $titulo = '<h1 style="text-align:center; color:" >RESULTADOS GENERALES</h1>';
-
+            $listaTotalVotos = $this->dbAdapter->query("select SUM(totalvotos.numeroVotos) as numeroTotalVotos
+                from totalvotos  
+                INNER join candidatos on totalvotos.idCandidato = candidatos.idCandidato
+                INNER join listas on candidatos.idListaCandidato = listas.idLista
+                INNER join tipocandidato on candidatos.idTipoCandidato = tipocandidato.idTipoCandidato
+                where candidatos.idTipoCandidato = $idTipoCandidato
+                GROUP by candidatos.idTipoCandidato
+                ORDER by candidatos.puesto, numeroVotos DESC",Adapter::QUERY_MODE_EXECUTE)->toArray();
+            if(count($listaTotalVotos)){
+                $totalVotos = $listaTotalVotos[0]['numeroTotalVotos'];
+            }
+            
+            
             $listaResultados = $this->dbAdapter->query("select listas.nombreLista, listas.numeroLista, listas.rutaFotoLista, 
                 tipocandidato.identificadorTipoCandidato,
                 candidatos.nombres,candidatos.rutaFotoCandidato, candidatos.puesto,
@@ -138,6 +151,19 @@ class ResultadosController extends AbstractActionController
                 ORDER by candidatos.puesto, numeroVotos DESC",Adapter::QUERY_MODE_EXECUTE)->toArray();
         }else if($idSexo == "0" && $idConfigurarJunta == "0"){
             $titulo = '<h1 style="text-align:center;">RESULTADOS EN LA ZONA ELECTORAL '.$nombreParroquia.'</h1>';
+            $listaTotalVotos = $this->dbAdapter->query("select SUM(totalvotos.numeroVotos) as numeroTotalVotos
+                from totalvotos  
+                INNER join candidatos on totalvotos.idCandidato = candidatos.idCandidato
+                INNER join listas on candidatos.idListaCandidato = listas.idLista
+                INNER join tipocandidato on candidatos.idTipoCandidato = tipocandidato.idTipoCandidato
+                where candidatos.idTipoCandidato = $idTipoCandidato and configurarjunta.idParroquia = $idParroquia
+                GROUP by candidatos.idTipoCandidato
+                ORDER by candidatos.puesto, numeroVotos DESC",Adapter::QUERY_MODE_EXECUTE)->toArray();
+            
+            if(count($listaTotalVotos)){
+                $totalVotos = $listaTotalVotos[0]['numeroTotalVotos'];
+            }
+            
             $listaResultados = $this->dbAdapter->query("select listas.nombreLista, listas.numeroLista, listas.rutaFotoLista, 
                 tipocandidato.identificadorTipoCandidato,
                 candidatos.nombres,candidatos.rutaFotoCandidato, candidatos.puesto,
@@ -152,6 +178,19 @@ class ResultadosController extends AbstractActionController
                 ORDER by candidatos.puesto, numeroVotos DESC",Adapter::QUERY_MODE_EXECUTE)->toArray();
         }else if($idParroquia == "0" && $idConfigurarJunta == "0"){
             $titulo = '<h1 style="text-align:center;">RESULTADOS POR SEXO <br>'.$nombreSexo.'</h1>';
+            $listaTotalVotos = $this->dbAdapter->query("select SUM(totalvotos.numeroVotos) as numeroTotalVotos
+                from totalvotos  
+                INNER join candidatos on totalvotos.idCandidato = candidatos.idCandidato
+                INNER join listas on candidatos.idListaCandidato = listas.idLista
+                INNER join tipocandidato on candidatos.idTipoCandidato = tipocandidato.idTipoCandidato
+                where candidatos.idTipoCandidato = $idTipoCandidato and configurarjunta.idSexo = $idSexo
+                GROUP by candidatos.idTipoCandidato
+                ORDER by candidatos.puesto, numeroVotos DESC",Adapter::QUERY_MODE_EXECUTE)->toArray();
+            
+            if(count($listaTotalVotos)){
+                $totalVotos = $listaTotalVotos[0]['numeroTotalVotos'];
+            }
+            
             $listaResultados = $this->dbAdapter->query("select listas.nombreLista, listas.numeroLista, listas.rutaFotoLista, 
                 tipocandidato.identificadorTipoCandidato,
                 candidatos.nombres,candidatos.rutaFotoCandidato, candidatos.puesto,
@@ -166,6 +205,21 @@ class ResultadosController extends AbstractActionController
                 ORDER by candidatos.puesto, numeroVotos DESC",Adapter::QUERY_MODE_EXECUTE)->toArray();
         }else if($idConfigurarJunta == "0"){
             $titulo = '<h1 style="text-align:center;">RESULTADOS EN LA ZONA ELECTORAL '.$nombreParroquia.' <br> '.$nombreSexo.'</h1>';
+            
+            $listaTotalVotos = $this->dbAdapter->query("select SUM(totalvotos.numeroVotos) as numeroTotalVotos
+                from totalvotos  
+                INNER join candidatos on totalvotos.idCandidato = candidatos.idCandidato
+                INNER join listas on candidatos.idListaCandidato = listas.idLista
+                INNER join tipocandidato on candidatos.idTipoCandidato = tipocandidato.idTipoCandidato
+                where candidatos.idTipoCandidato = $idTipoCandidato and configurarjunta.idParroquia = $idParroquia
+                and configurarjunta.idSexo = $idSexo
+                GROUP by candidatos.idTipoCandidato
+                ORDER by candidatos.puesto, numeroVotos DESC",Adapter::QUERY_MODE_EXECUTE)->toArray();
+            
+            if(count($listaTotalVotos)){
+                $totalVotos = $listaTotalVotos[0]['numeroTotalVotos'];
+            }
+            
             $listaResultados = $this->dbAdapter->query("select listas.nombreLista, listas.numeroLista, listas.rutaFotoLista, 
                 tipocandidato.identificadorTipoCandidato,
                 candidatos.nombres,candidatos.rutaFotoCandidato, candidatos.puesto,
@@ -181,6 +235,21 @@ class ResultadosController extends AbstractActionController
                 ORDER by candidatos.puesto, numeroVotos DESC",Adapter::QUERY_MODE_EXECUTE)->toArray();
         }else{
             $titulo = '<h1 style="text-align:center;">RESULTADOS EN LA ZONA ELECTORAL '.$nombreParroquia.'<br> JUNTA '.$nombreSexo.' N° '.$nombreJunta.'</h1>';
+            
+            $listaTotalVotos = $this->dbAdapter->query("select SUM(totalvotos.numeroVotos) as numeroTotalVotos
+                from totalvotos  
+                INNER join candidatos on totalvotos.idCandidato = candidatos.idCandidato
+                INNER join listas on candidatos.idListaCandidato = listas.idLista
+                INNER join tipocandidato on candidatos.idTipoCandidato = tipocandidato.idTipoCandidato
+                where candidatos.idTipoCandidato = $idTipoCandidato and configurarjunta.idParroquia = $idParroquia
+                and configurarjunta.idSexo = $idSexo and totalvotos.idConfigurarJunta = $idConfigurarJunta
+                GROUP by candidatos.idTipoCandidato
+                ORDER by candidatos.puesto, numeroVotos DESC",Adapter::QUERY_MODE_EXECUTE)->toArray();
+            
+            if(count($listaTotalVotos)){
+                $totalVotos = $listaTotalVotos[0]['numeroTotalVotos'];
+            }
+            
             $listaResultados = $this->dbAdapter->query("select listas.nombreLista, listas.numeroLista, listas.rutaFotoLista, 
                 tipocandidato.identificadorTipoCandidato,
                 candidatos.nombres,candidatos.rutaFotoCandidato, candidatos.puesto,
@@ -197,12 +266,15 @@ class ResultadosController extends AbstractActionController
         }
         $filasResultado = '';
         $contador = 1;
-        $totalVotos= 0;
+        $porcentaje = 0;
+        $totalPorcentaje = 0;
         foreach ($listaResultados as $valueResultado) {
             $colorFondo = '';
             if(($contador%2) == 0){
                 $colorFondo = 'background-color: #D0F5FD;';
             }
+            $porcentaje = ($valueResultado['numeroVotos']/$totalVotos)*100;
+            
             $filasResultado = $filasResultado.'
                 <tr>
                     <td style="'.$colorFondo.'"><b>'.$contador.'</b></td>
@@ -211,17 +283,19 @@ class ResultadosController extends AbstractActionController
                     <td style="text-align:center;vertical-align: middle;'.$colorFondo.'"><img style="margin:0 auto 0 auto; text-align:center; width: 100%;" src="'.$this->getRequest()->getBaseUrl().$valueResultado['rutaFotoCandidato'].'"></td>
                     <td style="vertical-align: middle;'.$colorFondo.'"><b>'.$valueResultado['nombres'].'</b></td>
                     <td style="text-align:center;vertical-align: middle;'.$colorFondo.'"><b>'.$valueResultado['numeroVotos'].'</b></td>
+                    <td style="text-align:center;vertical-align: middle;'.$colorFondo.'"><b>'.number_format($porcentaje,2).'%</b></td>
                 </tr>
 
             ';
             $contador++;
-            $totalVotos = $totalVotos + $valueResultado['numeroVotos'];
+            $totalPorcentaje = $totalPorcentaje + $porcentaje;
+            
         }
         $tabla = '';
         if($filasResultado != ""){
             $tabla = '<div class="table-responsive"><table class="table">
                 <thead>
-                <tr><th colspan="6" style="text-align:center;">'.$tipoCandidato.$titulo.'</th></tr>
+                <tr><th colspan="7" style="text-align:center;">'.$tipoCandidato.$titulo.'</th></tr>
                 <tr> 
                     <th style="width: 5%;text-align:center;background-color:#3c8dbc">#</th>
                     <th style="width: 5%;text-align:center;background-color:#3c8dbc">LOGO</th>
@@ -229,6 +303,7 @@ class ResultadosController extends AbstractActionController
                     <th style="width: 5%;text-align:center;background-color:#3c8dbc">FOTO</th>
                     <th style="width: 30%;text-align:center;background-color:#3c8dbc">CANDIDATO</th>
                     <th style="width: 30%;text-align:center;background-color:#3c8dbc">VOTOS</th>
+                    <th style="width: 30%;text-align:center;background-color:#3c8dbc">%</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -236,6 +311,7 @@ class ResultadosController extends AbstractActionController
                     <tr>
                         <td colspan="5" style="text-align:center;background-color:#FCFFC9;"><b>TOTAL</b></td>
                         <td style="text-align:center;background-color:#FCFFC9;"><b>'.$totalVotos.'</b></td>
+                        <td style="text-align:center;background-color:#FCFFC9;"><b>'.$totalPorcentaje.'%</b></td>
                     </tr>
                 </tbody>
             </table></div>';
