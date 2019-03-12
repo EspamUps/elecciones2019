@@ -11,17 +11,14 @@ namespace Nel\Modelo\Entity;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Adapter\Adapter;
 
-class Preguntas extends TableGateway
+class Listas extends TableGateway
 {
     public function __construct(Adapter $adapter = null, $databaseSchema = null, ResultSet $selectResultPrototype = null)
     {
-        return parent::__construct('preguntas', $adapter, $databaseSchema, $selectResultPrototype);
+        return parent::__construct('listas', $adapter, $databaseSchema, $selectResultPrototype);
     }
+    
 
-    public function obtenerPreguntas()
-    {
-        return  $this->select()->toArray();
-    }
     
 
  

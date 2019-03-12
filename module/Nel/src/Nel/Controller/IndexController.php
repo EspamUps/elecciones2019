@@ -13,7 +13,11 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Nel\Metodos\Metodos;
 use Nel\Metodos\Correo;
+use Nel\Modelo\Entity\Sexo;
 use Nel\Modelo\Entity\TipoCandidato;
+use Nel\Modelo\Entity\Parroquia;
+use Nel\Modelo\Entity\RangoEdad;
+use Zend\Session\Container;
 use Zend\Db\Adapter\Adapter;
 
 class IndexController extends AbstractActionController
@@ -24,6 +28,14 @@ class IndexController extends AbstractActionController
     {
         set_time_limit(600);
         $this->layout('layout/encuesta');
+        
+        $objCandidato = new TipoCandidato($this->dbAdapter); 
+        $listaTiposCandidatos = $objCandidato->obtenerTipoCandidato();
+         $optionTipoCandidato = '<option style="font-weight: bold;" value="0">SELECCIONE UN CANDIDATO</option>';
+         foreach ($listaTiposCandidatos as $valueCandidatos) {
+            $optionTipoCandidato = $optionTipoCandidato.'<option style="font-weight: bold;" value="'.$idSectorEncriptado.'">'.$valueSector['descripcionSector'].'</option>';
+        }
+        
 
         $array = array(
         );

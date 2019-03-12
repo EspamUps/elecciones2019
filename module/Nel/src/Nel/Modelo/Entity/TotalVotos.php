@@ -11,24 +11,26 @@ namespace Nel\Modelo\Entity;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Adapter\Adapter;
 
-class RangoEdad extends TableGateway
+class TotalVotos extends TableGateway
 {
     public function __construct(Adapter $adapter = null, $databaseSchema = null, ResultSet $selectResultPrototype = null)
     {
-        return parent::__construct('rangoedad', $adapter, $databaseSchema, $selectResultPrototype);
+        return parent::__construct('totalVotos', $adapter, $databaseSchema, $selectResultPrototype);
     }
     
 
     
-    public function obtenerRangoEdad()
-    {
-        return  $this->select()->toArray();
-    }
-    
-    public function filtrarRangoEdad($idRangoEdad)
-    {
-        return  $this->select(array('idRangoEdad'=>$idRangoEdad))->toArray();
-    }
+        public function ingresarTotalVotos($array)
+        {
+            $inserted = $this->insert($array);
+            if($inserted)
+            {
+                return  $this->getLastInsertValue();
+            }  else {
+                return 0;
+            }
+        }
+
  
    
 }
