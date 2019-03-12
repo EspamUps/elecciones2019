@@ -11,19 +11,14 @@ namespace Nel\Modelo\Entity;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Adapter\Adapter;
 
-class TipoCandidato extends TableGateway
+class TotalVotosInvalidos extends TableGateway
 {
     public function __construct(Adapter $adapter = null, $databaseSchema = null, ResultSet $selectResultPrototype = null)
     {
-        return parent::__construct('tipocandidato', $adapter, $databaseSchema, $selectResultPrototype);
+        return parent::__construct('totalvotosinvalidos', $adapter, $databaseSchema, $selectResultPrototype);
     }
     
-
-    
-    public function obtenerTipoCandidato()
-    {
-        return  $this->select()->toArray();
-    }   
+ 
 
  
    

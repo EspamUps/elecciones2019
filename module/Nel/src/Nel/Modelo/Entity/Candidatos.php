@@ -23,10 +23,26 @@ class Candidatos extends TableGateway
         return  $this->select(array('idCandidato'=>$idCandidato))->toArray();
     }
     
-//    public function filtrarCandidatoPorTipoCandidato($idTipoCandidato)
-//    {
-//        return  $this->select(array('idTipoCandidato'=>$idTipoCandidato))->toArray();
-//    }
+     public function filtrarCandidatoPorTipoCandidato($idTipoCandidato)
+    {
+        return  $this->select(array('idTipoCandidato'=>$idTipoCandidato))->toArray();
+    }
+    
+     public function filtrarCandidatoPorListaCandidato($idListaCandidato)
+    {
+        return  $this->select(array('idListaCandidato'=>$idListaCandidato))->toArray();
+    }
+    
+    public function filtrarCandidatoPorListaPorTipoCandidato($idTipoCandidato,$idListaCandidato)
+    {
+        return  $this->select(array('idListaCandidato'=>$idListaCandidato,'idTipoCandidato'=>$idTipoCandidato))->toArray();
+    }
+    
+     public function obtenerCandidatos()
+    {
+        return  $this->select()->toArray();
+    }
+    
 
     
 

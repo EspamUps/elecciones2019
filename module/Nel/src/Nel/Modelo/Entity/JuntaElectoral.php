@@ -11,21 +11,16 @@ namespace Nel\Modelo\Entity;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Adapter\Adapter;
 
-class TotalEncuestas extends TableGateway
+class JuntaElectoral extends TableGateway
 {
     public function __construct(Adapter $adapter = null, $databaseSchema = null, ResultSet $selectResultPrototype = null)
     {
-        return parent::__construct('totalencuestasparroquiasector', $adapter, $databaseSchema, $selectResultPrototype);
+        return parent::__construct('juntaelectoral', $adapter, $databaseSchema, $selectResultPrototype);
     }
     
 
     
 
-    
-    public function filtrarTotalEncuestasPorParroquia($idParroquia)
-    {
-        return $this->select(array('idParroquia=?'=>$idParroquia,'estadoTotalEncuestas=?'=>true))->toArray();
-    }
  
    
 }
