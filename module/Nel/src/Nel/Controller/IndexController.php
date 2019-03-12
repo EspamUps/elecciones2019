@@ -59,13 +59,14 @@ class IndexController extends AbstractActionController
             $optionSexo = $optionSexo.'<option style="font-weight: bold;" value="'.$valueSexo['idSexo'].'">'.$valueSexo['descripcionSexo'].'</option>';
         }
         
-        
+        $optionJunta= '<option style="font-weight: bold;" value="0">SELECCIONE UNA JUNTA</option>';
 
         $array = array(
             'optionTipoCandidato'=>$optionTipoCandidato,
             'optionParroquia'=>$optionParroquia,
             'optionSexo'=>$optionSexo,
-            'optionListas'=>$optionListas
+            'optionListas'=>$optionListas,
+            'optionJunta'=>$optionJunta
         );
         return new ViewModel($array);
     }
