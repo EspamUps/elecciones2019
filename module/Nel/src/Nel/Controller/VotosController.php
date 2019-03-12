@@ -460,6 +460,51 @@ class VotosController extends AbstractActionController
     
     
     
+     public function filtrarlistaportipocandidatoAction()
+    {
+        $mensaje = '<div class="alert alert-danger text-center" role="alert">OCURRIÓ UN ERROR INESPERADO</div>';
+        $validar = false;
+        $request=$this->getRequest();
+        if(!$request->isPost()){
+            $this->redirect()->toUrl($this->getRequest()->getBaseUrl().'/index/index');
+        }else{
+            $this->dbAdapter=$this->getServiceLocator()->get('Zend\Db\Adapter');
+           
+            $post = array_merge_recursive(
+                $request->getPost()->toArray(),
+                $request->getFiles()->toArray()
+            );
+            $idTipoCandidato = $post['idTipoCandidato'];
+            if($idTipoCandidato == "" || $idTipoCandidato == NULL){
+                $mensaje = '<div class="alert alert-danger text-center" role="alert">NO SE ENCUENTRA EL ÍNDICE DEL TIPO DE CANDIDATO</div>';
+            }else{
+                $objTipoCandidato = new TipoCandidato($this->dbAdapter);
+                $listaTipoCandidato = $objTipoCandidato->filtrarTipoCandidato($idTipoCandidato);
+                
+                if(count($listaTipoCandidato) == 0){
+                    $mensaje = '<div class="alert alert-danger text-center" role="alert">EL TIPO DE CANDIDATO SELECCIONADO NO EXISTE EN LA BASE DE DATOS</div>';
+                }else{
+                    
+                    $listaListas = $this->dbAdapter->query("SELECT DISTINCT listas.* FROM candidatos
+                        INNER JOIN listas on candidatos.idListaCandidato = listas.idLista
+                        where candidatos.idTipoCandidato=$idTipoCandidato",Adapter::QUERY_MODE_EXECUTE)->toArray();
+                          $optionListasCandidatos='<option value="0">SELECCIONE UNA JUNTA</option>';
+                         foreach ($listaListas as $valueListasC) {
+                               $optionListasCandidatos=$optionListasCandidatos.'<option value="'.$valueListasC['idLista'].'">'.$valueListasC['nombreLista'].'</option>'; 
+                            }
+                    $mensaje = '';
+                    $validar = TRUE;
+                    return new JsonModel(array('mensaje'=>$mensaje,'validar'=>$validar,'select'=>$optionListasCandidatos));
+                    
+                }
+            }
+        }        
+        return new JsonModel(array('mensaje'=>$mensaje,'validar'=>$validar));
+    }
+    
+    
+    
+    
     public function cargarformularioingresovotosAction()
     {
         $mensaje = '<div class="alert alert-danger text-center" role="alert">OCURRIÓ UN ERROR INESPERADO</div>';
@@ -504,8 +549,7 @@ class VotosController extends AbstractActionController
                             $validarLista =true;
                             if($idListaCandidato=="0")
                             {
-                               $listaListasCandidato =$objListaCandidato->obtenerListas();
-                               
+                               $listaListasCandidato =$objListaCandidato->obtenerListas();                               
                             }
                             else
                             {
@@ -518,22 +562,62 @@ class VotosController extends AbstractActionController
                             }
                             if($validarLista==true)
                             {
+                                $grupoDeTablas='';
+                                
+                                $tablaCandidatosEncabezado='<thead><tr>'
+                                                            .'<td style="width: 10%;"  class="text-center">#</td>'
+                                                            .'<td style="width: 10%;"  class="text-center">CANDIDATO</td>'                                            
+                                                            .'<td style="width: 50%;"  class="text-center">APELLIDOS Y NOMBRES</td>'
+                                                            .'<td style="width: 30%;"  class="text-center">NÚMERO DE VOTOS</td>'
+                                                        . '</tr></thead>';
+                                
+                                    
+                                        
                                 $tablaCandidadosPorLista ='';
                                 $objCandidato = new Candidatos($this->dbAdapter);
-                                foreach ($listaListasCandidato as $valueLista) {    
-                                    $encabezadoLista='<div class="text-center">'.$valueLista['nombreLista'].'</div>';
-                                    $listaCandidatos = $objCandidato->filtrarCandidatoPorListaPorTipoCandidato($idTipoCandidato, $valueLista['idLista']);
-                                    foreach ($listaCandidatos as $valueCandidato) {
-                                      
-                                    }
-                                    $encabezadoLista='';
+                                foreach ($listaListasCandidato as $valueLista) {  
                                     
+                                    $encabezadoLista='<div class="text-center" style="background-color:#fff;">'
+                                                       .'<br>'
+                                                        .'<img src="'.$this->getRequest()->getBaseUrl().'/'.$valueLista['rutaFotoLista'].'" class="text-center" style="width: 7%;" >'
+                                                        .'<h4><b>'.$valueLista['nombreLista'].'</b></h4>'
+                                                        .'<br>'
+                                                        . '</div>';
+                                    $listaCandidatos = $objCandidato->filtrarCandidatoPorListaPorTipoCandidato($idTipoCandidato, $valueLista['idLista']);
+                                    $contador=1;
+                                    $cuerpoTablaCandidatos='';
+                                    if(count($listaCandidatos)>0)
+                                    {
+                                            foreach ($listaCandidatos as $valueCandidato) {
+                                            $cuerpoTablaCandidatos=$cuerpoTablaCandidatos.'<tr>'
+                                                        .'<th class="text-center" style="vertical-align: middle;">'.$valueCandidato['puesto'].'</th>'
+                                                        .'<th class="text-center"  style="vertical-align: middle;"><img src="'.$this->getRequest()->getBaseUrl().'/'.$valueCandidato['rutaFotoCandidato'].'" style="width: 100%;"></th>'
+                                                        .'<th class="text-center" style="vertical-align: middle;">'.$valueCandidato['nombres'].'</th>'
+                                                        .'<th class="text-center"  style="vertical-align: middle;"></th>'
+                                                    . '</tr>';
+                                            }
+                                        $tablaCandidadosPorLista= '<div class="col-lg-12 table-responsive">'
+                                                .$encabezadoLista
+                                                . '<table  style="background-color:#fff" class="table table-hover">'
+                                                    .$tablaCandidatosEncabezado
+                                                .'<tbody>'
+                                                    .$cuerpoTablaCandidatos
+                                                .'<t/body>'
+                                                .'</table></div><br><br>';
+                                        $grupoDeTablas=$grupoDeTablas.$tablaCandidadosPorLista;
+                                    }
+                                    
+                                    $encabezadoLista='';                                    
                                 }
+                                $tabla='<div class="col-lg-2"></div>'
+                                        .'<div class="col-lg-8">'
+                                            .$grupoDeTablas
+                                        .'</div>'
+                                        .'<div class="col-lg-2"></div>';
                             
-                           
                                $mensaje = '';
                                $validar = TRUE;
-                               return new JsonModel(array('mensaje'=>$mensaje,'validar'=>$validar));
+                               return new JsonModel(array('mensaje'=>$mensaje,'validar'=>$validar,'tabla'=>$tabla));
                             }
                         }
                     }
