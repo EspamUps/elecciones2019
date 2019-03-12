@@ -120,6 +120,7 @@ class ResultadosController extends AbstractActionController
         
         
         $titulo ="";
+        $tipoCandidato='';
         if($idParroquia == "0" && $idSexo == "0" && $idConfigurarJunta == "0"){
             $tipoCandidato = '<h1 style="text-align:center; color:">'.$descripcionTipoCandidato.'</h1>';
             $titulo = '<h1 style="text-align:center; color:" >RESULTADOS GENERALES</h1>';
