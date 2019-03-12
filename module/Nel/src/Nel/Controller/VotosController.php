@@ -490,7 +490,7 @@ class VotosController extends AbstractActionController
                         where candidatos.idTipoCandidato=$idTipoCandidato",Adapter::QUERY_MODE_EXECUTE)->toArray();
                           $optionListasCandidatos='<option value="0">SELECCIONE UNA JUNTA</option>';
                          foreach ($listaListas as $valueListasC) {
-                               $optionListasCandidatos=$optionListasCandidatos.'<option value="'.$valueListasC['idLista'].'">'.$valueListasC['nombreLista'].'</option>'; 
+                               $optionListasCandidatos=$optionListasCandidatos.'<option value="'.$valueListasC['idLista'].'">'.$valueListasC['numeroLista'].' - '.$valueListasC['nombreLista'].'</option>'; 
                             }
                     $mensaje = '';
                     $validar = TRUE;
@@ -580,7 +580,7 @@ class VotosController extends AbstractActionController
                                     $encabezadoLista='<div class="text-center" style="background-color:#fff;">'
                                                        .'<br>'
                                                         .'<img src="'.$this->getRequest()->getBaseUrl().'/'.$valueLista['rutaFotoLista'].'" class="text-center" style="width: 7%;" >'
-                                                        .'<h4><b>'.$valueLista['nombreLista'].'</b></h4>'
+                                                        .'<h4><b>'.$valueLista['numeroLista'].' - '.$valueLista['nombreLista'].'</b></h4>'
                                                         .'<br>'
                                                         . '</div>';
                                     $listaCandidatos = $objCandidato->filtrarCandidatoPorListaPorTipoCandidato($idTipoCandidato, $valueLista['idLista']);
