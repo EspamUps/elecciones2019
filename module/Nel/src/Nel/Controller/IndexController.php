@@ -13,11 +13,7 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Nel\Metodos\Metodos;
 use Nel\Metodos\Correo;
-use Nel\Modelo\Entity\Sexo;
-use Nel\Modelo\Entity\Sector;
-use Nel\Modelo\Entity\Parroquia;
-use Nel\Modelo\Entity\RangoEdad;
-use Zend\Session\Container;
+use Nel\Modelo\Entity\TipoCandidato;
 use Zend\Db\Adapter\Adapter;
 
 class IndexController extends AbstractActionController
@@ -30,6 +26,26 @@ class IndexController extends AbstractActionController
         $this->layout('layout/encuesta');
 
         $array = array(
+        );
+        return new ViewModel($array);
+    }
+    
+    public function resultadosAction()
+    {
+        set_time_limit(600);
+        $this->layout('layout/encuesta');
+        $this->dbAdapter=$this->getServiceLocator()->get('Zend\Db\Adapter');
+        $objMetodos = new Metodos();
+        $objTipoCandidato = new TipoCandidato($this->dbAdapter);
+        
+        $listaTipoCandidato = $objTipoCandidato->obtenerTipoCandidato();
+        $optionTipoCandidato = '<option value="0">SELECCIONE UN TIPO DE CANDIDATO</option>';
+        foreach ($listaTipoCandidato as $valueTipoCandidato) {
+             $optionTipoCandidato = $optionTipoCandidato.'<option value="'.$valueTipoCandidato['idTipoCandidato'].'">'.$valueTipoCandidato['descripcionTipoCandidato'].'</option>';
+        }
+        
+        $array = array(
+            'optionTipoCandidato'=>$optionTipoCandidato
         );
         return new ViewModel($array);
     }

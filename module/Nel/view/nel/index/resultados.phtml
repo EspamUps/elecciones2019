@@ -1,5 +1,5 @@
 <?php 
-$optionSectores = $this->optionSectores;
+$optionTipoCandidato = $this->optionTipoCandidato;
 $optionParroquias = $this->optionParroquias;
 $optionRangoEdad = $this->optionRangoEdad;
 $optionSexo = $this->optionSexo;
@@ -9,7 +9,7 @@ $optionSexo = $this->optionSexo;
     <br><br>
     <section class="content-header">
         <h1>
-            RESULTADOS ENCUESTA
+            RESULTADOS ELECCIONES 2019
             <small>Nel-Latino</small>
         </h1>
     </section>
@@ -25,258 +25,22 @@ $optionSexo = $this->optionSexo;
                         <div class="nav-tabs-custom">
                             <ul class="nav nav-tabs">
                                 <li class="active"><a style="cursor: pointer;" href="#resultadosPorCandidatura" onclick="filtrarResultadoPorCandidatura();" data-toggle="tab" aria-expanded="true">RESULTADOS POR CANDIDATURA</a></li>
-                                <li class=""><a style="cursor: pointer;" href="#resultadosPorSectores" onclick="filtrarResultadoPorSector();" data-toggle="tab" aria-expanded="false">RESULTADOS POR SECTOR</a></li>
                                 <li class=""><a style="cursor: pointer;" href="#resultadosPorParroquias" onclick="filtrarResultadoPorParroquia();" data-toggle="tab" aria-expanded="false">RESULTADOS POR PARRÓQUIA</a></li>
-                                <li class=""><a style="cursor: pointer;" href="#resultadosPorRangoEdad" onclick="filtrarResultadoPorRangoEdad();" data-toggle="tab" aria-expanded="false">RESULTADOS POR RANGO DE EDAD</a></li>
                                 <li class=""><a style="cursor: pointer;" href="#resultadosPorSexo" onclick="filtrarResultadoPorSexo();" data-toggle="tab" aria-expanded="false">RESULTADOS POR SEXO</a></li>
                             </ul>
                             <div class="tab-content">
                                 <div id="resultadosPorCandidatura" class="tab-pane active " >
-                                    <div class="col-lg-12" id="mensajeResultadodPorCandidatura"></div>
-                                    <div class="col-lg-12 text-center" id="preguntaAlcalde"></div>
-                                    <div class="col-lg-12">
-                                        <div class="chart-responsive col-lg-6">
-                                            <div  id="charPorCandidaturaAlcalde" style="width: 100%; position: relative;"></div>  
-                                        </div> 
-                                        <div class="col-lg-6" id="contenedorTablaAlcalde">
-
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 text-center" id="preguntaConcejal"></div>
-                                    <div class="col-lg-12">
-                                        <div class="chart-responsive col-lg-6">
-                                            <div  id="charPorCandidaturaConcejal" style="width: 100%; position: relative;"></div>  
-                                        </div> 
-                                        <div class="col-lg-6" id="contenedorTablaConcejal">
-
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 text-center" id="preguntaPrefecto"></div>
-                                    <div class="col-lg-12">
-                                        <div class="chart-responsive col-lg-6">
-                                            <div  id="charPorCandidaturaPrefecto" style="width: 100%; position: relative;"></div>  
-                                        </div> 
-                                        <div class="col-lg-6" id="contenedorTablaPrefecto">
-
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 text-center" id="preguntaJunta"></div>
-                                    <div class="col-lg-12">
-                                        <div class="chart-responsive col-lg-6">
-                                            <div  id="charPorCandidaturaJunta" style="width: 100%; position: relative;"></div>  
-                                        </div> 
-                                        <div class="col-lg-6" id="contenedorTablaJunta">
-
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="tab-pane" id="resultadosPorSectores">
-                                    <div class="col-lg-12 form-group">
-                                        <br>
-                                        <select onchange="filtrarResultadoPorSector();" class="form-control" id="selectSector" style="font-weight: bold;">
-                                           <?php echo $optionSectores; ?>
+                                    <div class="form-group col-lg-6">
+                                        <select id="selectTipoCandidato" class="form-control"> 
+                                            <?php echo $optionTipoCandidato;?>
                                         </select>
-                                    </div>
-                                    <div class="col-lg-12" id="mensajeResultadodPorSector"></div>
-                                    <div class="col-lg-12 text-center" id="preguntaAlcaldeSector"></div>
-                                    <div class="col-lg-12">
-                                        <div class="chart-responsive col-lg-6">
-                                            <div  id="charAlcaldeSector" style="width: 100%; position: relative;"></div>  
-                                        </div> 
-                                        <div class="col-lg-6" id="contenedorTablaAlcaldeSector">
-
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 text-center" id="preguntaConcejalSector"></div>
-                                    <div class="col-lg-12">
-                                        <div class="chart-responsive col-lg-6">
-                                            <div  id="charConcejalSector" style="width: 100%; position: relative;"></div>  
-                                        </div> 
-                                        <div class="col-lg-6" id="contenedorTablaConcejalSector">
-
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 text-center" id="preguntaPrefectoSector"></div>
-                                    <div class="col-lg-12">
-                                        <div class="chart-responsive col-lg-6">
-                                            <div  id="charPrefectoSector" style="width: 100%; position: relative;"></div>  
-                                        </div> 
-                                        <div class="col-lg-6" id="contenedorTablaPrefectoSector">
-
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 text-center" id="preguntaJuntaSector"></div>
-                                    <div class="col-lg-12">
-                                        <div class="chart-responsive col-lg-6">
-                                            <div  id="charJuntaSector" style="width: 100%; position: relative;"></div>  
-                                        </div> 
-                                        <div class="col-lg-6" id="contenedorTablaJuntaSector">
-
-                                        </div>
                                     </div>
                                 </div>
                                 <div class="tab-pane" id="resultadosPorParroquias">
-                                    <div class="col-lg-12 form-group">
-                                        <br>
-                                        <select onchange="filtrarResultadoPorParroquia();" class="form-control" id="selectParroquia" style="font-weight: bold;">
-                                           <?php echo $optionParroquias; ?>
-                                        </select>
-                                    </div>
-                                    <div class="col-lg-12" id="mensajeResultadodPorParroquia"></div>
-                                    <div class="col-lg-12 text-center" id="preguntaAlcaldeParroquia"></div>
-                                    <div class="col-lg-12">
-                                        <div class="col-lg-8">
-                                            <div class="col-lg-6 chart-responsive">
-                                                <div class="text-center" id="tituloAlcaldeSectorUrbano"></div>
-                                                <div id="charAlcaldeParroquiaSectorUrbano" style="width: 100%; position: relative;"></div>  
-                                            </div>
-                                            <div class="col-lg-6 chart-responsive">
-                                                <div class="text-center" id="tituloAlcaldeSectorRural"></div>
-                                                <div id="charAlcaldeParroquiaSectorRural" style="width: 100%; position: relative;"></div> 
-                                            </div>
-                                        </div> 
-                                        <div class="col-lg-4" id="contenedorTablaAlcaldeParroquia">
-
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 text-center" id="preguntaConcejalParroquia"></div>
-                                    <div class="col-lg-12">
-                                        <div class="col-lg-8">
-                                            <div class="col-lg-6 chart-responsive">
-                                                <div class="text-center" id="tituloConcejalSectorUrbano"></div>
-                                                <div id="charConcejalParroquiaSectorUrbano" style="width: 100%; position: relative;"></div>
-                                            </div>
-                                            <div class="col-lg-6 chart-responsive">
-                                                <div class="text-center" id="tituloConcejalSectorRural"></div>
-                                                <div id="charConcejalParroquiaSectorRural" style="width: 100%; position: relative;"></div> 
-                                            </div>
-                                        </div> 
-                                        <div class="col-lg-4" id="contenedorTablaConcejalParroquia">
-
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 text-center" id="preguntaPrefectoParroquia"></div>
-                                    <div class="col-lg-12">
-                                        <div class="chart-responsive col-lg-8">
-                                            <div class="col-lg-6 chart-responsive">
-                                                <div class="text-center" id="tituloPrefectoSectorUrbano"></div>
-                                                <div id="charPrefectoParroquiaSectorUrbano" style="width: 100%; position: relative;"></div>  
-                                            </div> 
-                                            <div class="col-lg-6 chart-responsive">
-                                                <div class="text-center" id="tituloPrefectoSectorRural"></div>
-                                                <div id="charPrefectoParroquiaSectorRural" style="width: 100%; position: relative;"></div> 
-                                            </div> 
-                                        </div> 
-                                        <div class="col-lg-4" id="contenedorTablaPrefectoParroquia">
-
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 text-center" id="preguntaJuntaParroquia"></div>
-                                    <div class="col-lg-12">
-                                        <div class="chart-responsive col-lg-8">
-                                            <div class="col-lg-6 chart-responsive">
-                                                <div class="text-center" id="tituloJuntaSectorUrbano"></div>
-                                                <div id="charJuntaParroquiaSectorUrbano" style="width: 100%; position: relative;"></div>  
-                                            </div> 
-                                            <div class="col-lg-6 chart-responsive">
-                                                <div class="text-center" id="tituloJuntaSectorRural"></div>
-                                                <div id="charJuntaParroquiaSectorRural" style="width: 100%; position: relative;"></div> 
-                                            </div> 
-                                        </div> 
-                                        <div class="col-lg-4" id="contenedorTablaJuntaParroquia">
-
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="tab-pane" id="resultadosPorRangoEdad">
-                                    <div class="col-lg-12 form-group">
-                                        <br>
-                                        <select onchange="filtrarResultadoPorRangoEdad();" class="form-control" id="selectRangoEdad" style="font-weight: bold;">
-                                           <?php echo $optionRangoEdad; ?>
-                                        </select>
-                                    </div>
-                                    <div class="col-lg-12" id="mensajeResultadodPorRangoEdad"></div>
-                                    <div class="col-lg-12 text-center" id="preguntaAlcaldeRangoEdad"></div>
-                                    <div class="col-lg-12">
-                                        <div class="chart-responsive col-lg-6">
-                                            <div  id="charAlcaldeRangoEdad" style="width: 100%; position: relative;"></div>  
-                                        </div> 
-                                        <div class="col-lg-6" id="contenedorTablaAlcaldeRangoEdad">
-
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 text-center" id="preguntaConcejalRangoEdad"></div>
-                                    <div class="col-lg-12">
-                                        <div class="chart-responsive col-lg-6">
-                                            <div  id="charConcejalRangoEdad" style="width: 100%; position: relative;"></div>  
-                                        </div> 
-                                        <div class="col-lg-6" id="contenedorTablaConcejalRangoEdad">
-
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 text-center" id="preguntaPrefectoRangoEdad"></div>
-                                    <div class="col-lg-12">
-                                        <div class="chart-responsive col-lg-6">
-                                            <div  id="charPrefectoRangoEdad" style="width: 100%; position: relative;"></div>  
-                                        </div> 
-                                        <div class="col-lg-6" id="contenedorTablaPrefectoRangoEdad">
-
-                                        </div>
-                                    </div>
-                                     <div class="col-lg-12 text-center" id="preguntaJuntaRangoEdad"></div>
-                                    <div class="col-lg-12">
-                                        <div class="chart-responsive col-lg-6">
-                                            <div  id="charJuntaRangoEdad" style="width: 100%; position: relative;"></div>  
-                                        </div> 
-                                        <div class="col-lg-6" id="contenedorTablaJuntaRangoEdad">
-
-                                        </div>
-                                    </div>
+                                   
                                 </div>
                                 <div class="tab-pane" id="resultadosPorSexo">
-                                    <div class="col-lg-12 form-group">
-                                        <br>
-                                        <select onchange="filtrarResultadoPorSexo();" class="form-control" id="selectSexo" style="font-weight: bold;">
-                                           <?php echo $optionSexo; ?>
-                                        </select>
-                                    </div>
-                                    <div class="col-lg-12" id="mensajeResultadodPorSexo"></div>
-                                    <div class="col-lg-12 text-center" id="preguntaAlcaldeSexo"></div>
-                                    <div class="col-lg-12">
-                                        <div class="chart-responsive col-lg-6">
-                                            <div  id="charAlcaldeSexo" style="width: 100%; position: relative;"></div>  
-                                        </div> 
-                                        <div class="col-lg-6" id="contenedorTablaAlcaldeSexo">
-
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 text-center" id="preguntaConcejalSexo"></div>
-                                    <div class="col-lg-12">
-                                        <div class="chart-responsive col-lg-6">
-                                            <div  id="charConcejalSexo" style="width: 100%; position: relative;"></div>  
-                                        </div> 
-                                        <div class="col-lg-6" id="contenedorTablaConcejalSexo">
-
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 text-center" id="preguntaPrefectoSexo"></div>
-                                    <div class="col-lg-12">
-                                        <div class="chart-responsive col-lg-6">
-                                            <div  id="charPrefectoSexo" style="width: 100%; position: relative;"></div>  
-                                        </div> 
-                                        <div class="col-lg-6" id="contenedorTablaPrefectoSexo">
-
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 text-center" id="preguntaJuntaSexo"></div>
-                                    <div class="col-lg-12">
-                                        <div class="chart-responsive col-lg-6">
-                                            <div  id="charJuntaSexo" style="width: 100%; position: relative;"></div>  
-                                        </div> 
-                                        <div class="col-lg-6" id="contenedorTablaJuntaSexo">
-
-                                        </div>
-                                    </div>
+                                    
                                 </div>
                                 
                             </div>
@@ -288,7 +52,7 @@ $optionSexo = $this->optionSexo;
         </div>
     </section>
 </div>
-<script type="text/javascript">
+<!--<script type="text/javascript">
     $(document).ready(function(){
         filtrarResultadoPorCandidatura();
     })
@@ -1073,4 +837,4 @@ function filtrarResultadoPorCandidatura(){
         $("#"+contenedor).html('<div class="text-center"><img style="width: 10%;" src="<?php echo $this->basePath(); ?>/public/images/otras/cargando.gif" /></div>')
         
     }
-</script>
+</script>-->
