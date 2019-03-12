@@ -12,7 +12,7 @@ namespace Nel\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\JsonModel;
 use Nel\Metodos\Metodos;
-use Nel\Modelo\Entity\Sector;
+use Nel\Modelo\Entity\TipoCandidato;
 use Nel\Modelo\Entity\Preguntas;
 use Nel\Modelo\Entity\Parroquia;
 use Nel\Modelo\Entity\RangoEdad;
@@ -23,6 +23,120 @@ use Zend\Db\Adapter\Adapter;
 
 class ResultadosController extends AbstractActionController
 {
+    
+    
+    public $dbAdapter;
+    public function obtenerformularioAction()
+    {
+        $mensaje = '<div class="alert alert-danger text-center" role="alert">OCURRIÓ UN ERROR INESPERADO</div>';
+        $validar = false;
+        $request=$this->getRequest();
+        if(!$request->isPost()){
+            $this->redirect()->toUrl($this->getRequest()->getBaseUrl().'/index/index');
+        }else{
+            $this->dbAdapter=$this->getServiceLocator()->get('Zend\Db\Adapter');
+            $objTipoCandidato = new TipoCandidato($this->dbAdapter);
+            $objParroquias = new Parroquia($this->dbAdapter);
+            $objSexo = new Sexo($this->dbAdapter);
+            $post = array_merge_recursive(
+                $request->getPost()->toArray(),
+                $request->getFiles()->toArray()
+            );
+            $idFormulario = $post['idFormulario'];
+            
+            if($idFormulario == "" || $idFormulario == "0" || $idFormulario == NULL){
+            }else{
+                $tabla = '';
+                if($idFormulario == '1'){
+                    $listaTipoCandidato = $objTipoCandidato->obtenerTipoCandidato();
+                    $optionTipoCandidato = '<option value="0" style="font-weight: bold;">SELECCIONE UN TIPO DE CANDIDATO</option>';
+                    
+                    foreach ($listaTipoCandidato as $valueTipoCandidato) {
+                        $optionTipoCandidato = $optionTipoCandidato.'<option value="'.$valueTipoCandidato['idTipoCandidato'].'" style="font-weight: bold;">'.$valueTipoCandidato['descripcionTipoCandidato'].'</option>';
+                    }
+                    
+                    $listaParroquias = $objParroquias->obtenerParroquias();
+                    $optionParroquia = '<option value="0" style="font-weight: bold;">TODAS LAS ZONAS ELECTORALES</option>';
+                    foreach ($listaParroquias as $valueParroquias) {
+                        $optionParroquia = $optionParroquia.'<option value="'.$valueParroquias['idParroquia'].'" style="font-weight: bold;">'.$valueParroquias['nombreParroquia'].'</option>';
+                    }
+                    
+                    $listaSexo = $objSexo->obtenerSexo();
+                    $optionSexo = '<option value="0" style="font-weight: bold;">TODOS LOS SEXOS</option>';
+                    foreach ($listaSexo as $valueSexo) {
+                        $optionSexo = $optionSexo.'<option value="'.$valueSexo['idSexo'].'" style="font-weight: bold;">'.$valueSexo['descripcionSexo'].'</option>';
+                    }
+                    
+                    
+                    $selectJuntas = '<select style="font-weight: bold;" class="form-control" id="selectJuntas"><option value="0" style="font-weight: bold;">TODOS LAS JUNTAS</option></select>';
+                    
+                    
+                    
+                    $selectTipoCandidato = '<select style="font-weight: bold;" class="form-control" id="selectTipoCandidato">'.$optionTipoCandidato.'</select>';
+                    $selectParroquias = '<select style="font-weight: bold;" class="form-control" id="selectParroquias" onchange="filtrarJuntasPorParroquiaSexo();">'.$optionParroquia.'</select>';
+                    $selectSexo = '<select style="font-weight: bold;" class="form-control" id="selectSexo" onchange="filtrarJuntasPorParroquiaSexo();">'.$optionSexo.'</select>';
+                    $tabla = '<div class="form-group col-lg-3">'.$selectTipoCandidato.'</div>
+                                <div class="form-group col-lg-3">'.$selectParroquias.'</div>
+                                <div class="form-group col-lg-3">'.$selectSexo.'</div>
+                                <div class="form-group col-lg-3">'.$selectJuntas.'</div>
+                            ';
+                    $mensaje = '';
+                    $validar = TRUE;
+                }else{
+                    $mensaje = '<div class="alert alert-danger text-center" role="alert">EL FORMULARIO NO EXISTE</div>';
+                }
+              
+                return new JsonModel(array(
+                    'tabla'=>$tabla,
+                    'mensaje'=>$mensaje,
+                    'validar'=>$validar,
+                ));
+
+                
+                
+                        
+                        
+               
+                
+            
+            } 
+        }
+        return new JsonModel(array('mensaje'=>$mensaje,'validar'=>$validar));
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 //    public $dbAdapter;
 //        public function filtrarresultadoporsexoAction()
 //    {
