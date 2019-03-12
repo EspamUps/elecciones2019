@@ -19,15 +19,10 @@
                         <div class="nav-tabs-custom">
                             <ul class="nav nav-tabs">
                                 <li class="active"><a style="cursor: pointer;" href="#resultadosPorCandidatura" onclick="obtenerFormulario(1,'resultadosPorCandidatura');" data-toggle="tab" aria-expanded="true">RESULTADOS POR CANDIDATURA</a></li>
-                                <li class=""><a style="cursor: pointer;" href="#resultadosPorParroquias" onclick="obtenerFormulario(2,'resultadosPorParroquias');" data-toggle="tab" aria-expanded="false">RESULTADOS POR PARRÓQUIA</a></li>
-                                <li class=""><a style="cursor: pointer;" href="#resultadosPorSexo" onclick="obtenerFormulario(3,'resultadosPorSexo');" data-toggle="tab" aria-expanded="false">RESULTADOS POR SEXO</a></li>
                             </ul>
                             <div class="tab-content">
                                 <div id="resultadosPorCandidatura" class="tab-pane active">    
-                                </div>
-                                <div class="tab-pane" id="resultadosPorParroquias">
-                                </div>
-                                <div class="tab-pane" id="resultadosPorSexo">
+                                    
                                 </div>
                                 
                             </div>
@@ -43,6 +38,127 @@
     $(document).ready(function(){
         obtenerFormulario(1,'resultadosPorCandidatura');
     })
+</script>
+<script type="text/javascript">
+    function filtrarResultados()
+    {
+        var idTipoCandidato = $('#selectTipoCandidato').val();
+        var idParroquia = $('#selectParroquias').val();
+        var idConfigurarJunta = $('#selectJuntas').val();
+        var idSexo = $("#selectSexo").val();
+        if(idTipoCandidato=="0")
+        {
+            $("#mensajeFormResultados").html("");
+            $('#contenedorTablaResultados').html("");
+        }else{
+            $.ajax({
+                url : '<?php echo $this->basePath();?>/resultados/filtrarresultados',
+                type: 'post',
+                dataType: 'JSON',
+                data: {idTipoCandidato: idTipoCandidato, idParroquia: idParroquia,idConfigurarJunta:idConfigurarJunta,idSexo:idSexo },
+                beforeSend: function(){
+                    $("#mensajeFormResultados").html("");
+                    cargandoResultados('contenedorTablaResultados');
+                },
+                uploadProgress: function(event,position,total,percentComplete){
+                },
+                success: function(data){  
+                    if(data.validar == true){
+                        $('#contenedorTablaResultados').html(data.tabla);
+                    }else{
+                        $("#mensajeFormResultados").html("");
+                        $('#contenedorTablaResultados').html(data.mensaje);
+                        
+                    }
+                },
+                complete: function(){
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    $('#mensajeFormResultados').html("");
+                    if(xhr.status === 0){
+                        $("#contenedorTablaResultados").html('<div class="alert alert-danger text-center" role="alert">NO HAY CONEXIÓN A INTERNET. VERIFICA LA RED</div>');
+                    }else if(xhr.status == 404){
+                        $("#contenedorTablaResultados").html('<div class="alert alert-danger text-center" role="alert">ERROR [404]. PÁGINA NO ENCONTRADA</div>');
+                    }else if(xhr.status == 500){
+                        $("#contenedorTablaResultados").html('<div class="alert alert-danger text-center" role="alert">ERROR DEL SERVIDOR [500]</div>');
+                    }else if(errorThrown === 'parsererror'){
+                        $("#contenedorTablaResultados").html('<div class="alert alert-danger text-center" role="alert">LA PETICIÓN JSON HA FALLADO </div>');
+                    }else if(errorThrown === 'timeout'){
+                        $("#contenedorTablaResultados").html('<div class="alert alert-danger text-center" role="alert">TIEMPO DE ESPERA TERMINADO</div>');
+                    }else if(errorThrown === 'abort'){
+                        $("#contenedorTablaResultados").html('<div class="alert alert-danger text-center" role="alert">LA PETICIÓN AJAX FUE ABORTADA</div>');
+                    }else{
+                        $("#contenedorTablaResultados").html('<div class="alert alert-danger text-center" role="alert">OCURRIÓ UN ERROR INESPERADO</div>');
+                    }
+                }
+            }); 
+        }
+    }
+</script>
+<script type="text/javascript">
+    function filtrarJuntasElectorales()
+    {
+        var idParroquia = $('#selectParroquias').val();
+        var idSexo = $('#selectSexo').val();
+        
+        if(idParroquia=="0")
+        {
+            $('#contenedorTablaResultados').html("");
+            $("#mensajeFormResultados").html("");
+            $('#selectJuntas').html("<option value='0'>TODAS LAS JUNTAS</option>");
+        }
+        else if (idSexo=="0")
+        {            
+            $('#contenedorTablaResultados').html("");
+            $("#mensajeFormResultados").html("");
+            $('#selectJuntas').html("<option value='0'>TODAS LAS JUNTAS</option>");
+        }
+        else{
+            $.ajax({
+                url : '<?php echo $this->basePath();?>/resultados/filtrarjuntaselectorales',
+                type: 'post',
+                dataType: 'JSON',
+                data: {idParroquia: idParroquia,idSexo:idSexo },
+                beforeSend: function(){
+                    $('#contenedorTablaResultados').html("");
+                    $("#mensajeFormResultados").html("");
+                    $('#selectJuntas').html("<option value='0'>CARGANDO... </option>");
+                },
+                uploadProgress: function(event,position,total,percentComplete){
+                },
+                success: function(data){  
+                    if(data.validar == true){
+                        $('#selectJuntas').html(data.select);
+                    }else{
+                        $('#contenedorTablaResultados').html("");
+                        $("#mensajeFormResultados").html("");
+                        $('#selectJuntas').html("<option value='0'>TODAS LAS JUNTAS</option>");
+                    }
+                },
+                complete: function(){
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    $('#selectJuntas').html("<option value='0'>TODAS LAS JUNTAS</option>"); 
+                    $('#contenedorTablaResultados').html("");
+                    if(xhr.status === 0){
+                        $("#mensajeFormResultados").html('<div class="alert alert-danger text-center" role="alert">NO HAY CONEXIÓN A INTERNET. VERIFICA LA RED</div>');
+                    }else if(xhr.status == 404){
+                        $("#mensajeFormResultados").html('<div class="alert alert-danger text-center" role="alert">ERROR [404]. P�?GINA NO ENCONTRADA</div>');
+                    }else if(xhr.status == 500){
+                        $("#mensajeFormResultados").html('<div class="alert alert-danger text-center" role="alert">ERROR DEL SERVIDOR [500]</div>');
+                    }else if(errorThrown === 'parsererror'){
+                        $("#mensajeFormResultados").html('<div class="alert alert-danger text-center" role="alert">LA PETICIÓN JSON HA FALLADO </div>');
+                    }else if(errorThrown === 'timeout'){
+                        $("#mensajeFormResultados").html('<div class="alert alert-danger text-center" role="alert">TIEMPO DE ESPERA TERMINADO</div>');
+                    }else if(errorThrown === 'abort'){
+                        $("#mensajeFormResultados").html('<div class="alert alert-danger text-center" role="alert">LA PETICIÓN AJAX FUE ABORTADA</div>');
+                    }else{
+                        $("#mensajeFormResultados").html('<div class="alert alert-danger text-center" role="alert">OCURRIÓ UN ERROR INESPERADO</div>');
+                    }
+                }
+            }); 
+        }
+    }
 </script>
 <script type="text/javascript">
 function obtenerFormulario(idFormulario,contenedor){
