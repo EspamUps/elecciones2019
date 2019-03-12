@@ -18,9 +18,7 @@ class JuntaElectoral extends TableGateway
         return parent::__construct('juntaelectoral', $adapter, $databaseSchema, $selectResultPrototype);
     }
     
-
     
-
- 
+    
    
 }

@@ -1,5 +1,10 @@
-
-
+<?php
+$optionTipoCandidato = $this->optionTipoCandidato;
+$optionParroquias = $this->optionParroquia;
+$optionJuntas = $this->optionJuntas;
+$optionSexo = $this->optionSexo;
+$optionListas =$this->optionListas;
+ ?>
 <div class="content-wrapper" style="min-height: 1123px;">
     <br><br>
     <section class="content-header">
@@ -15,21 +20,122 @@
                     <div class="col-lg-12">
                         <h2 class="title text-center" style="font-family: fantasy;">ELECCIONES SECCIONALES 2019</h2>
                     </div>
-                    <div class="col-lg-12" id="mensajeEncuesta"></div>
-                    <form onKeypress="if(event.keyCode == 13) event.returnValue = false;"  onsubmit="return validarIngresoEncuesta(this)" id="formIngresarEncuesta" method="post" action="<?php echo $this->basePath();?>/encuesta/ingresarencuesta"> 
-                        <div id="contenedorEncuesta" class="col-lg-12 box">
-
-                        </div>
-                        <div id="contenedorCuerpoEncuesta" class="col-lg-12 box">
-
-                        </div>
-                    </form>
-                    <div class="col-lg-12" id="mensajeFormIngresarEncuesta"></div>
+                    <div  id="mensajeFormIngresarDatos"></div>
+                    <div  class=" col-lg-12">
+                        <div class="form-group col-lg-6" id="contenedorSeleccionarTipoCandidato">
+                                <label for="selectTipoCandidato">TIPO DE CANDIDATO</label>
+                                <select class="form-control" id="selectTipoCandidato" name="selectTipoCandidato">
+                                <?php echo $optionTipoCandidato;?>
+                                </select>
+                        </div> 
+                         <div class="form-group col-lg-6" id="contenedorSeleccionarListaCandidato">
+                                <label for="selectListaCandidato">LISTA DEL CANDIDATO</label>
+                                <select class="form-control" id="selectListaCandidato" name="selectListaCandidato">
+                                <?php echo $optionListas;?>
+                                </select>
+                        </div> 
+                    </div>
+                    <div  class=" col-lg-12">
+                        <div class="form-group col-lg-4" id="contenedorSeleccionarParroquia">
+                                <label for="selectParroquia">ZONA ELECTORAL</label>
+                                <select   onchange="filtrarJuntasElectorales();" class="form-control" id="selectParroquia" name="selectParroquia">
+                                <?php echo $optionParroquias;?>
+                                </select>
+                        </div> 
+                            <div class="form-group col-lg-4" id="contenedorSexo">
+                                <label for="selectSexo">SEXO</label>
+                                <select onchange="filtrarJuntasElectorales();" class="form-control" id="selectSexo" name="selectSexo">
+                                <?php echo $optionSexo;?>
+                                </select>
+                        </div> 
+                        <div class="form-group col-lg-4" id="contenedorJuntas">
+                                <label for="selectJuntas">JUNTA ELECTORAL</label>
+                                <select class="form-control" id="selectJuntas" name="selectJuntas">
+                                <?php echo $optionJuntas;?>
+                                </select>
+                        </div> 
+                    </div>
+                    <div  class=" col-lg-12" id="contenedorFormularioVotos">
+                        
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 </div>
+
+<script type="text/javascript">
+    function cargandoVotos(contenedor){
+        $("#"+contenedor).html('<div class="text-center"><img style="width: 10%;" src="<?php echo $this->basePath(); ?>/public/images/otras/cargando.gif" /></div>')
+        
+    }
+</script>
+<script>
+    
+    function filtrarJuntasElectorales()
+    {
+        debugger
+        var idParroquia = $('#selectParroquia').val();
+        var idSexo = $('#selectSexo').val();
+        
+        if(idParroquia=="0")
+        {
+            $('#mensajeFormIngresarDatos').html("");
+            $('#contenedorFormularioVotos').html("");
+            $('#selectJuntas').html("<option value='0'>SELECCIONE UNA JUNTA</option>");
+        }
+        else if (idSexo=="0")
+        {            
+            $('#mensajeFormIngresarDatos').html("");
+            $('#contenedorFormularioVotos').html("");
+            $('#selectJuntas').html("<option value='0'>SELECCIONE UNA JUNTA</option>");
+        }
+        else{
+            $.ajax({
+                url : '<?php echo $this->basePath();?>/votos/filtrarjuntaselectorales',
+                type: 'post',
+                dataType: 'JSON',
+                data: {idParroquia: idParroquia,idSexo:idSexo },
+                beforeSend: function(){
+                    $('#selectJuntas').html("<option value='0'>CARGANDO... </option>");
+                },
+                uploadProgress: function(event,position,total,percentComplete){
+                },
+                success: function(data){  
+                    if(data.validar == true){
+                        $('#selectJuntas').html(data.select);
+                    }else{
+                        $("#mensajeFormIngresarDatos").html(data.mensaje);
+                        $('#contenedorFormularioVotos').html("");
+                     $('#selectJuntas').html("<option value='0'>SELECCIONE UNA JUNTA</option>");
+                    }
+                },
+                complete: function(){
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    $('#selectJuntas').html("<option value='0'>SELECCIONE UNA JUNTA</option>"); 
+                    $('#contenedorFormularioVotos').html("");
+                    if(xhr.status === 0){
+                        $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">NO HAY CONEXIÓN A INTERNET. VERIFICA LA RED</div>');
+                    }else if(xhr.status == 404){
+                        $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">ERROR [404]. P�?GINA NO ENCONTRADA</div>');
+                    }else if(xhr.status == 500){
+                        $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">ERROR DEL SERVIDOR [500]</div>');
+                    }else if(errorThrown === 'parsererror'){
+                        $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">LA PETICIÓN JSON HA FALLADO </div>');
+                    }else if(errorThrown === 'timeout'){
+                        $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">TIEMPO DE ESPERA TERMINADO</div>');
+                    }else if(errorThrown === 'abort'){
+                        $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">LA PETICIÓN AJAX FUE ABORTADA</div>');
+                    }else{
+                        $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">OCURRIÓ UN ERROR INESPERADO</div>');
+                    }
+                }
+            }); 
+        }
+    }
+
+</script>
 <!--<script type="text/javascript">
 function mayus(e) {
     e.value = e.value.toUpperCase();
@@ -71,7 +177,7 @@ $(function(){
             if(xhr.status === 0){
                 $("#mensajeFormIngresarEncuesta").html('<div class="alert alert-danger text-center" role="alert">NO HAY CONEXIÓN A INTERNET </div>');
             }else if(xhr.status == 404){
-                $("#mensajeFormIngresarEncuesta").html('<div class="alert alert-danger text-center" role="alert">P�?GINA NO ENCONTRADA ERROR. [404]</div>');
+                $("#mensajeFormIngresarEncuesta").html('<div class="alert alert-danger text-center" role="alert">P�?GINA NO ENCONTRADA ERROR. [404]</div>');
             }else if(xhr.status == 500){
                 $("#mensajeFormIngresarEncuesta").html('<div class="alert alert-danger text-center" role="alert">ERROR DEL SERVIDOR [500]</div>');
             }else if(errorThrown === 'parsererror'){
@@ -129,7 +235,7 @@ $(function(){
                     if(xhr.status === 0){
                         $("#contenedorCuerpoEncuesta").html('<div class="alert alert-danger text-center" role="alert">NO HAY CONEXIÓN A INTERNET. VERIFICA LA RED</div>');
                     }else if(xhr.status == 404){
-                        $("#contenedorCuerpoEncuesta").html('<div class="alert alert-danger text-center" role="alert">ERROR [404]. P�?GINA NO ENCONTRADA</div>');
+                        $("#contenedorCuerpoEncuesta").html('<div class="alert alert-danger text-center" role="alert">ERROR [404]. P�?GINA NO ENCONTRADA</div>');
                     }else if(xhr.status == 500){
                         $("#contenedorCuerpoEncuesta").html('<div class="alert alert-danger text-center" role="alert">ERROR DEL SERVIDOR [500]</div>');
                     }else if(errorThrown === 'parsererror'){
@@ -175,7 +281,7 @@ $(function(){
                 if(xhr.status === 0){
                     $("#mensajeEncuesta").html('<div class="alert alert-danger text-center" role="alert">NO HAY CONEXIÓN A INTERNET. VERIFICA LA RED</div>');
                 }else if(xhr.status == 404){
-                    $("#mensajeEncuesta").html('<div class="alert alert-danger text-center" role="alert">ERROR [404]. P�?GINA NO ENCONTRADA</div>');
+                    $("#mensajeEncuesta").html('<div class="alert alert-danger text-center" role="alert">ERROR [404]. P�?GINA NO ENCONTRADA</div>');
                 }else if(xhr.status == 500){
                     $("#mensajeEncuesta").html('<div class="alert alert-danger text-center" role="alert">ERROR DEL SERVIDOR [500]</div>');
                 }else if(errorThrown === 'parsererror'){

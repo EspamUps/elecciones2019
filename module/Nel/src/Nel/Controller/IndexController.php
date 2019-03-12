@@ -16,7 +16,7 @@ use Nel\Metodos\Correo;
 use Nel\Modelo\Entity\Sexo;
 use Nel\Modelo\Entity\TipoCandidato;
 use Nel\Modelo\Entity\Parroquia;
-use Nel\Modelo\Entity\RangoEdad;
+use Nel\Modelo\Entity\Listas;
 use Zend\Session\Container;
 use Zend\Db\Adapter\Adapter;
 
@@ -28,16 +28,44 @@ class IndexController extends AbstractActionController
     {
         set_time_limit(600);
         $this->layout('layout/encuesta');
+        $this->dbAdapter=$this->getServiceLocator()->get('Zend\Db\Adapter');
         
         $objCandidato = new TipoCandidato($this->dbAdapter); 
+        $objParroquia = new Parroquia($this->dbAdapter);
+        $objLista = new Listas($this->dbAdapter);
+        $objSexo = new Sexo($this->dbAdapter);
+        
         $listaTiposCandidatos = $objCandidato->obtenerTipoCandidato();
-         $optionTipoCandidato = '<option style="font-weight: bold;" value="0">SELECCIONE UN CANDIDATO</option>';
-         foreach ($listaTiposCandidatos as $valueCandidatos) {
-            $optionTipoCandidato = $optionTipoCandidato.'<option style="font-weight: bold;" value="'.$idSectorEncriptado.'">'.$valueSector['descripcionSector'].'</option>';
+        $optionTipoCandidato = '<option style="font-weight: bold;" value="0">SELECCIONE UN TIPO DE CANDIDATO</option>';
+         foreach ($listaTiposCandidatos as $valueTiposCandidatos) {
+            $optionTipoCandidato = $optionTipoCandidato.'<option style="font-weight: bold;" value="'.$valueTiposCandidatos['idTipoCandidato'].'">'.$valueTiposCandidatos['descripcionTipoCandidato'].'</option>';
         }
+        
+        $listaListasC = $objLista->obtenerListas();
+        $optionListas = '<option style="font-weight: bold;" value="0">SELECCIONE UNA LISTA</option>';
+         foreach ($listaListasC as $valueListas) {
+            $optionListas = $optionListas.'<option style="font-weight: bold;" value="'.$valueListas['idLista'].'">'.$valueListas['nombreLista'].'</option>';
+        }
+        
+         $listaParroquias = $objParroquia->obtenerParroquias();
+         $optionParroquia = '<option style="font-weight: bold;" value="0">SELECCIONE UNA ZONA ELECTORAL</option>';
+         foreach ($listaParroquias as $valueParroquias) {
+            $optionParroquia = $optionParroquia.'<option style="font-weight: bold;" value="'.$valueParroquias['idParroquia'].'">'.$valueParroquias['nombreParroquia'].'</option>';
+        }
+        
+          $listaSexo = $objSexo->obtenerSexo();
+         $optionSexo = '<option style="font-weight: bold;" value="0">SELECCIONE UN SEXO</option>';
+         foreach ($listaSexo as $valueSexo) {
+            $optionSexo = $optionSexo.'<option style="font-weight: bold;" value="'.$valueSexo['idSexo'].'">'.$valueSexo['descripcionSexo'].'</option>';
+        }
+        
         
 
         $array = array(
+            'optionTipoCandidato'=>$optionTipoCandidato,
+            'optionParroquia'=>$optionParroquia,
+            'optionSexo'=>$optionSexo,
+            'optionListas'=>$optionListas
         );
         return new ViewModel($array);
     }

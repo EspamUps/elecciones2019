@@ -62,7 +62,7 @@ return array(
     'controllers' => array(
         'invokables' => array(
             'Nel\Controller\Index' => 'Nel\Controller\IndexController',
-            'Nel\Controller\Encuesta' => 'Nel\Controller\EncuestaController',
+            'Nel\Controller\Votos' => 'Nel\Controller\VotosController',
             'Nel\Controller\Resultados' => 'Nel\Controller\ResultadosController',
         ),
     ),

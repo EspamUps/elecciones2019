@@ -20,7 +20,10 @@ class Listas extends TableGateway
     
 
     
-
+  public function obtenerListas()
+    {
+        return  $this->select()->toArray();
+    }
  
    
 }
