@@ -24,6 +24,11 @@ class Listas extends TableGateway
     {
         return  $this->select()->toArray();
     }
+    
+     public function filtrarLista($idLista)
+    {
+        return  $this->select(array('idLista'=>$idLista))->toArray();
+    }
  
    
 }

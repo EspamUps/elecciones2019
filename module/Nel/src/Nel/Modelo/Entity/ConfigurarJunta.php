@@ -11,25 +11,17 @@ namespace Nel\Modelo\Entity;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Adapter\Adapter;
 
-class TipoCandidato extends TableGateway
+class ConfigurarJunta extends TableGateway
 {
     public function __construct(Adapter $adapter = null, $databaseSchema = null, ResultSet $selectResultPrototype = null)
     {
-        return parent::__construct('tipocandidato', $adapter, $databaseSchema, $selectResultPrototype);
+        return parent::__construct('configurarjunta', $adapter, $databaseSchema, $selectResultPrototype);
     }
     
-
     
-    public function obtenerTipoCandidato()
+     public function filtrarConfigurarJunta($idConfigurarJunta)
     {
-        return  $this->select()->toArray();
-    }  
-    
-    public function filtrarTipoCandidato($idTipoCandidato)
-    {
-        return  $this->select(array('idTipoCandidato'=>$idTipoCandidato))->toArray();
+        return  $this->select(array('idConfigurarJunta'=>$idConfigurarJunta))->toArray();
     }
-
- 
    
 }

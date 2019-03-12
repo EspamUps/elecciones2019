@@ -51,7 +51,7 @@ $optionJunta =$this->optionJunta;
                         </div> 
                         <div class="form-group col-lg-4" id="contenedorJuntas">
                                 <label for="selectJuntas">JUNTA ELECTORAL</label>
-                                <select class="form-control" id="selectJuntas" name="selectJuntas">
+                                <select class="form-control"  onchange="filtrarFormularioIngresarVotos();" id="selectJuntas" name="selectJuntas">
                                 <?php echo $optionJunta;?>
                                 </select>
                         </div> 
@@ -75,7 +75,6 @@ $optionJunta =$this->optionJunta;
     
     function filtrarJuntasElectorales()
     {
-        debugger
         var idParroquia = $('#selectParroquia').val();
         var idSexo = $('#selectSexo').val();
         
@@ -98,6 +97,7 @@ $optionJunta =$this->optionJunta;
                 dataType: 'JSON',
                 data: {idParroquia: idParroquia,idSexo:idSexo },
                 beforeSend: function(){
+                     $('#contenedorFormularioVotos').html("");
                     $('#selectJuntas').html("<option value='0'>CARGANDO... </option>");
                 },
                 uploadProgress: function(event,position,total,percentComplete){
@@ -108,6 +108,7 @@ $optionJunta =$this->optionJunta;
                     }else{
                         $("#mensajeFormIngresarDatos").html(data.mensaje);
                         $('#contenedorFormularioVotos').html("");
+                         $("#mensajeFormIngresarDatos").html("");
                      $('#selectJuntas').html("<option value='0'>SELECCIONE UNA JUNTA</option>");
                     }
                 },
@@ -130,6 +131,65 @@ $optionJunta =$this->optionJunta;
                         $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">LA PETICIÓN AJAX FUE ABORTADA</div>');
                     }else{
                         $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">OCURRIÓ UN ERROR INESPERADO</div>');
+                    }
+                }
+            }); 
+        }
+    }
+    
+    
+    function filtrarFormularioIngresarVotos()
+    {
+        var idTipoCandidato =$('#selectTipoCandidato').val();
+        var idListaCandidato = $('#selectListaCandidato').val();
+        var idConfigurarJunta = $('#selectJuntas').val();
+        
+        if(idTipoCandidato=="0")
+        {
+            $('#mensajeFormIngresarDatos').html("");
+            $('#contenedorFormularioVotos').html("<div class='alert alert-danger text-center' role='alert'>SELECCIONE UN TIPO DE CANDIDATO</div>");
+        } 
+        else if (idConfigurarJunta=="0")
+        {            
+            $('#mensajeFormIngresarDatos').html("");
+            $('#contenedorFormularioVotos').html("<div class='alert alert-danger text-center' role='alert'>SELECCIONE UNA JUNTA</div>");
+            $('#selectJuntas').html("<option value='0'>SELECCIONE UNA JUNTA</option>");
+        }
+        else{
+            $.ajax({
+                url : '<?php echo $this->basePath();?>/votos/cargarformularioingresovotos',
+                type: 'post',
+                dataType: 'JSON',
+                data: { idTipoCandidato:idTipoCandidato,idListaCandidato:idListaCandidato,idConfigurarJunta:idConfigurarJunta},
+                beforeSend: function(){
+                   cargandoVotos('contenedorFormularioVotos');
+                },
+                uploadProgress: function(event,position,total,percentComplete){
+                },
+                success: function(data){  
+                    if(data.validar == true){
+                        $('#contenedorFormularioVotos').html(data.tabla);
+                    }else{
+                        $("#contenedorFormularioVotos").html(data.mensaje);
+                    }
+                },
+                complete: function(){
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    if(xhr.status === 0){
+                        $("#contenedorFormularioVotos").html('<div class="alert alert-danger text-center" role="alert">NO HAY CONEXIÓN A INTERNET. VERIFICA LA RED</div>');
+                    }else if(xhr.status == 404){
+                        $("#contenedorFormularioVotos").html('<div class="alert alert-danger text-center" role="alert">ERROR [404]. P�?GINA NO ENCONTRADA</div>');
+                    }else if(xhr.status == 500){
+                        $("#contenedorFormularioVotos").html('<div class="alert alert-danger text-center" role="alert">ERROR DEL SERVIDOR [500]</div>');
+                    }else if(errorThrown === 'parsererror'){
+                        $("#contenedorFormularioVotos").html('<div class="alert alert-danger text-center" role="alert">LA PETICIÓN JSON HA FALLADO </div>');
+                    }else if(errorThrown === 'timeout'){
+                        $("#contenedorFormularioVotos").html('<div class="alert alert-danger text-center" role="alert">TIEMPO DE ESPERA TERMINADO</div>');
+                    }else if(errorThrown === 'abort'){
+                        $("#contenedorFormularioVotos").html('<div class="alert alert-danger text-center" role="alert">LA PETICIÓN AJAX FUE ABORTADA</div>');
+                    }else{
+                        $("#contenedorFormularioVotos").html('<div class="alert alert-danger text-center" role="alert">OCURRIÓ UN ERROR INESPERADO</div>');
                     }
                 }
             }); 

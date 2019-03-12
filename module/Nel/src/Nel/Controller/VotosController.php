@@ -11,15 +11,12 @@ namespace Nel\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\JsonModel;
-use Nel\Metodos\Metodos;
-use Nel\Modelo\Entity\RangoEdad;
+use Nel\Modelo\Entity\Candidatos;
+use Nel\Modelo\Entity\TipoCandidato;
+use Nel\Modelo\Entity\Listas;
+use Nel\Modelo\Entity\ConfigurarJunta;
 use Nel\Modelo\Entity\Sexo;
-use Nel\Modelo\Entity\Sector;
 use Nel\Modelo\Entity\Parroquia;
-use Nel\Modelo\Entity\Preguntas;
-use Nel\Modelo\Entity\OpcionesPregunta;
-use Nel\Modelo\Entity\CabeceraEncuesta;
-use Nel\Modelo\Entity\CuerpoEncuesta;
 use Zend\Db\Adapter\Adapter;
 
 class VotosController extends AbstractActionController
@@ -454,8 +451,93 @@ class VotosController extends AbstractActionController
                     $mensaje = '';
                     $validar = TRUE;
                     return new JsonModel(array('mensaje'=>$mensaje,'validar'=>$validar,'select'=>$optionJunta));
-                }                
-            }}
+                    }
+                }
+            }
+        }        
+        return new JsonModel(array('mensaje'=>$mensaje,'validar'=>$validar));
+    }
+    
+    
+    
+    public function cargarformularioingresovotosAction()
+    {
+        $mensaje = '<div class="alert alert-danger text-center" role="alert">OCURRIÓ UN ERROR INESPERADO</div>';
+        $validar = false;
+        $request=$this->getRequest();
+        if(!$request->isPost()){
+            $this->redirect()->toUrl($this->getRequest()->getBaseUrl().'/index/index');
+        }
+        else
+        {
+            $this->dbAdapter=$this->getServiceLocator()->get('Zend\Db\Adapter');
+           
+            $post = array_merge_recursive(
+                $request->getPost()->toArray(),
+                $request->getFiles()->toArray()
+            );
+            $idTipoCandidato = $post['idTipoCandidato'];
+            $idListaCandidato=$post['idListaCandidato'];            
+            $idConfigurarJunta=$post['idConfigurarJunta'];
+
+            if($idTipoCandidato == "" || $idTipoCandidato == NULL){
+                $mensaje = '<div class="alert alert-danger text-center" role="alert">NO SE ENCUENTRA EL ÍNDICE DEL TIPO DE CANDIDATO</div>';
+            }else if($idListaCandidato == "" || $idListaCandidato == NULL){
+                $mensaje = '<div class="alert alert-danger text-center" role="alert">NO SE ENCUENTRA EL ÍNDICE DE LA LISTA DEL CANDIDATO</div>';
+            }else if($idConfigurarJunta == "" || $idConfigurarJunta == NULL){
+                $mensaje = '<div class="alert alert-danger text-center" role="alert">NO SE ENCUENTRA EL ÍNDICE DE LA JUNTA</div>';
+            }else{
+                $objTipoCandidato = new TipoCandidato($this->dbAdapter);
+                $listaTipoCandidato = $objTipoCandidato->filtrarTipoCandidato($idTipoCandidato);
+                
+                if(count($listaTipoCandidato) == 0){
+                    $mensaje = '<div class="alert alert-danger text-center" role="alert">EL TIPO DE CANDIDATO SELECCIONADO NO EXISTE EN LA BASE DE DATOS</div>';
+                }else{
+                        $objConfigurarJunta = new ConfigurarJunta($this->dbAdapter);
+                        $listaConfigurarJunta = $objConfigurarJunta->filtrarConfigurarJunta($idConfigurarJunta);
+                        
+                        if(count($listaConfigurarJunta) == 0){
+                            $mensaje = '<div class="alert alert-danger text-center" role="alert">LA JUNTA SELECCIONADA NO EXISTE EN LA BASE DE DATOS</div>';
+                        }else
+                        {
+                            $objListaCandidato = new Listas($this->dbAdapter);
+                            $validarLista =true;
+                            if($idListaCandidato=="0")
+                            {
+                               $listaListasCandidato =$objListaCandidato->obtenerListas();
+                               
+                            }
+                            else
+                            {
+                                $listaListasCandidato = $objListaCandidato->filtrarLista($idListaCandidato);
+
+                                if(count($listaListasCandidato) == 0){
+                                    $validarLista=FALSE;
+                                    $mensaje = '<div class="alert alert-danger text-center" role="alert">LA LISTA SELECCIONADA NO EXISTE EN LA BASE DE DATOS</div>';
+                                }
+                            }
+                            if($validarLista==true)
+                            {
+                                $tablaCandidadosPorLista ='';
+                                $objCandidato = new Candidatos($this->dbAdapter);
+                                foreach ($listaListasCandidato as $valueLista) {    
+                                    $encabezadoLista='<div class="text-center">'.$valueLista['nombreLista'].'</div>';
+                                    $listaCandidatos = $objCandidato->filtrarCandidatoPorListaPorTipoCandidato($idTipoCandidato, $valueLista['idLista']);
+                                    foreach ($listaCandidatos as $valueCandidato) {
+                                      
+                                    }
+                                    $encabezadoLista='';
+                                    
+                                }
+                            
+                           
+                               $mensaje = '';
+                               $validar = TRUE;
+                               return new JsonModel(array('mensaje'=>$mensaje,'validar'=>$validar));
+                            }
+                        }
+                    }
+                }
         }
         return new JsonModel(array('mensaje'=>$mensaje,'validar'=>$validar));
     }
