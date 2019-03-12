@@ -46,18 +46,10 @@ class IndexController extends AbstractActionController
     {
         set_time_limit(600);
         $this->layout('layout/encuesta');
-        $this->dbAdapter=$this->getServiceLocator()->get('Zend\Db\Adapter');
-        $objMetodos = new Metodos();
-        $objTipoCandidato = new TipoCandidato($this->dbAdapter);
-        
-        $listaTipoCandidato = $objTipoCandidato->obtenerTipoCandidato();
-        $optionTipoCandidato = '<option value="0">SELECCIONE UN TIPO DE CANDIDATO</option>';
-        foreach ($listaTipoCandidato as $valueTipoCandidato) {
-             $optionTipoCandidato = $optionTipoCandidato.'<option value="'.$valueTipoCandidato['idTipoCandidato'].'">'.$valueTipoCandidato['descripcionTipoCandidato'].'</option>';
-        }
+       
         
         $array = array(
-            'optionTipoCandidato'=>$optionTipoCandidato
+            
         );
         return new ViewModel($array);
     }
