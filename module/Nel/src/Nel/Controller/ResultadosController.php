@@ -196,6 +196,7 @@ class ResultadosController extends AbstractActionController
         }
         $filasResultado = '';
         $contador = 1;
+        $totalVotos= 0;
         foreach ($listaResultados as $valueResultado) {
             $colorFondo = '';
             if(($contador%2) == 0){
@@ -213,6 +214,7 @@ class ResultadosController extends AbstractActionController
 
             ';
             $contador++;
+            $totalVotos = $totalVotos + $valueResultado['numeroVotos'];
         }
         $tabla = '';
         if($filasResultado != ""){
@@ -222,14 +224,18 @@ class ResultadosController extends AbstractActionController
                 <tr> 
                     <th style="width: 5%;text-align:center;background-color:#3c8dbc">#</th>
                     <th style="width: 5%;text-align:center;background-color:#3c8dbc">LOGO</th>
-                    <th style="width: 10%;text-align:center;background-color:#3c8dbc"">LISTA</th>
-                    <th style="width: 5%;text-align:center;background-color:#3c8dbc"">FOTO</th>
-                    <th style="width: 30%;text-align:center;background-color:#3c8dbc"">CANDIDATO</th>
-                    <th style="width: 30%;text-align:center;background-color:#3c8dbc"">VOTOS</th>
+                    <th style="width: 10%;text-align:center;background-color:#3c8dbc">LISTA</th>
+                    <th style="width: 5%;text-align:center;background-color:#3c8dbc">FOTO</th>
+                    <th style="width: 30%;text-align:center;background-color:#3c8dbc">CANDIDATO</th>
+                    <th style="width: 30%;text-align:center;background-color:#3c8dbc">VOTOS</th>
                 </tr>
                 </thead>
                 <tbody>
                     '.$filasResultado.'
+                    <tr>
+                        <td colspan="5" style="text-align:center;background-color:#FCFFC9;"><b>TOTAL</b></td>
+                        <td style="text-align:center;background-color:#FCFFC9;"><b>'.$totalVotos.'</b></td>
+                    </tr>
                 </tbody>
             </table></div>';
         }
