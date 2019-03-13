@@ -47,6 +47,7 @@ class ResultadosController extends AbstractActionController
             $idParroquia = $post['idParroquia'];
             $idConfigurarJunta = $post['idConfigurarJunta'];
             $idSexo = $post['idSexo'];
+            $idLista = $post['idLista'];
             
             if($idTipoCandidato == "" || $idTipoCandidato == "0" || $idTipoCandidato == NULL){
                 $mensaje = '<div class="alert alert-danger text-center" role="alert">SELECCIONE UN TIPO DE CANDIDATURA</div>';
@@ -56,6 +57,8 @@ class ResultadosController extends AbstractActionController
                 $mensaje = '<div class="alert alert-danger text-center" role="alert">SELECCIONE UNA JUNTA VÁLIDA</div>';
             }else if($idSexo == "" || $idSexo == NULL){
                 $mensaje = '<div class="alert alert-danger text-center" role="alert">SELECCIONE UNA JUNTA VÁLIDA</div>';
+            }else if($idLista == "" || $idLista == NULL){
+                $mensaje = '<div class="alert alert-danger text-center" role="alert">SELECCIONE UNA LISTA</div>';
             }else{ 
                 $listaTipoCandidato = $objTipoCandidato->filtrarTipoCandidato($idTipoCandidato);
                 if(count($listaTipoCandidato) == 0){
@@ -68,16 +71,21 @@ class ResultadosController extends AbstractActionController
                     $tabla = '';
                     if($listaTipoCandidato[0]['identificadorTipoCandidato'] == 1 || $listaTipoCandidato[0]['identificadorTipoCandidato'] == 6 || $listaTipoCandidato[0]['identificadorTipoCandidato'] == 3){
                         
-                        $tabla = $this->cargarResultadoAlcaldesPrefectoConcejalRural($idTipoCandidato, $idParroquia, $idSexo, $idConfigurarJunta,$descripcionTipoCandidato);
+                        $tabla = $this->cargarResultadoAlcaldesPrefectoConcejalRural($idTipoCandidato, $idParroquia, $idSexo, $idConfigurarJunta,$idLista,$descripcionTipoCandidato);
                         if($tabla != ""){
                             $mensaje = '';
                             $validar = TRUE;
                         }else{
                             $mensaje = '<div class="alert alert-danger text-center" role="alert">AÚN NO SE HAN INGRESADO LOS VOTOS</div>';
                         }
+                    }else if($listaTipoCandidato[0]['identificadorTipoCandidato'] == 2 || $listaTipoCandidato[0]['identificadorTipoCandidato'] == 4 || $listaTipoCandidato[0]['identificadorTipoCandidato'] == 5){
+
+                     
+                            $mensaje = '';
+                            $validar = TRUE;
+                        
                     }else{
-                        $mensaje = '';
-                        $validar = TRUE;
+                            $mensaje = '<div class="alert alert-danger text-center" role="alert">SELECCIONE UN TIPO DE CANDIDATURA VÁLIDA</div>';
                     }
                     return new JsonModel(array(
                         'tabla'=>$tabla,
@@ -91,38 +99,337 @@ class ResultadosController extends AbstractActionController
     }
     
     
+//    public function cargarResultadoConcejalUrbanoJuntaParroquial($idTipoCandidato, $idParroquia, $idSexo, $idConfigurarJunta,$descripcionTipoCandidato){
+//         $this->dbAdapter=$this->getServiceLocator()->get('Zend\Db\Adapter');
+//        $objParroquia = new Parroquia($this->dbAdapter);
+//        $objSexo = new Sexo($this->dbAdapter);
+//        $listaResultados = array();
+//        
+//        $listaParroquia = array();
+//        $listaSexo = array();
+//        $nombreParroquia = "";
+//        $nombreSexo = "";
+//        $nombreJunta = "";
+//        if($idParroquia != "0"){
+//            $listaParroquia = $objParroquia->filtrarParroquia($idParroquia);
+//            $nombreParroquia = $listaParroquia[0]['nombreParroquia'];
+//        }
+//        if($idSexo != "0"){
+//            $listaSexo = $objSexo->filtrarSexo($idSexo);
+//            $nombreSexo = $listaSexo[0]['descripcionSexo'];
+//        }    
+//        if($idConfigurarJunta != "0"){
+//            $listaJunta = $this->dbAdapter->query("SELECT juntaelectoral.*
+//            from configurarjunta inner JOIN juntaelectoral on configurarjunta.idJuntaElectoral = juntaelectoral.idJuntaElectoral
+//            where configurarjunta.idConfigurarJunta = $idConfigurarJunta",Adapter::QUERY_MODE_EXECUTE)->toArray();
+//            $nombreJunta = $listaJunta[0]['numeroJunta'];
+//        }
+//        
+//        $listaListas = $this->dbAdapter->query("select listas.*
+//                from totalvotos  
+//                INNER join candidatos on totalvotos.idCandidato = candidatos.idCandidato
+//                INNER join listas on candidatos.idListaCandidato = listas.idLista
+//                INNER join tipocandidato on candidatos.idTipoCandidato = tipocandidato.idTipoCandidato
+//                inner join configurarjunta on totalvotos.idConfigurarJunta = configurarjunta.idConfigurarJunta
+//                where candidatos.idTipoCandidato = $idTipoCandidato
+//                GROUP by candidatos.idListaCandidato
+//                ORDER by candidatos.idListaCandidato ASC",Adapter::QUERY_MODE_EXECUTE)->toArray();
+//        
+//        
+//        
+//        
+//        
+//        
+//        
+//        
+//        
+//        
+//        
+//        
+//        
+//        
+//        
+//        
+//        
+//        
+//        
+//        
+//        
+//        
+//        
+//        $titulo ="";
+//        $tipoCandidato='';
+//        $totalVotos=0;
+//        
+//        
+//        
+//        
+//        
+//        
+//        
+//        if($idParroquia == "0" && $idSexo == "0" && $idConfigurarJunta == "0"){
+//            $tipoCandidato = '<h1 style="text-align:center; color:">'.$descripcionTipoCandidato.'</h1>';
+//            $titulo = '<h1 style="text-align:center; color:" >RESULTADOS GENERALES</h1>';
+//            $listaTotalVotos = $this->dbAdapter->query("select SUM(totalvotos.numeroVotos) as numeroTotalVotos
+//                from totalvotos  
+//                INNER join candidatos on totalvotos.idCandidato = candidatos.idCandidato
+//                INNER join listas on candidatos.idListaCandidato = listas.idLista
+//                INNER join tipocandidato on candidatos.idTipoCandidato = tipocandidato.idTipoCandidato
+//                where candidatos.idTipoCandidato = $idTipoCandidato
+//                GROUP by candidatos.idTipoCandidato
+//                ORDER by candidatos.puesto, numeroVotos DESC",Adapter::QUERY_MODE_EXECUTE)->toArray();
+//            if(count($listaTotalVotos)){
+//                $totalVotos = $listaTotalVotos[0]['numeroTotalVotos'];
+//            }
+//            
+//            
+//            $listaResultados = $this->dbAdapter->query("select listas.nombreLista, listas.numeroLista, listas.rutaFotoLista, 
+//                tipocandidato.identificadorTipoCandidato,
+//                candidatos.nombres,candidatos.rutaFotoCandidato, candidatos.puesto,
+//                SUM(totalvotos.numeroVotos) as numeroVotos
+//                from totalvotos  
+//                INNER join candidatos on totalvotos.idCandidato = candidatos.idCandidato
+//                INNER join listas on candidatos.idListaCandidato = listas.idLista
+//                INNER join tipocandidato on candidatos.idTipoCandidato = tipocandidato.idTipoCandidato
+//                where candidatos.idTipoCandidato = $idTipoCandidato
+//                GROUP by candidatos.idCandidato
+//                ORDER by candidatos.puesto, numeroVotos DESC",Adapter::QUERY_MODE_EXECUTE)->toArray();
+//        }else if($idSexo == "0" && $idConfigurarJunta == "0"){
+//            $titulo = '<h1 style="text-align:center;">RESULTADOS EN LA ZONA ELECTORAL '.$nombreParroquia.'</h1>';
+//            $listaTotalVotos = $this->dbAdapter->query("select SUM(totalvotos.numeroVotos) as numeroTotalVotos
+//                from totalvotos  
+//                INNER join candidatos on totalvotos.idCandidato = candidatos.idCandidato
+//                INNER join listas on candidatos.idListaCandidato = listas.idLista
+//                INNER join tipocandidato on candidatos.idTipoCandidato = tipocandidato.idTipoCandidato
+//                INNER join configurarjunta on totalvotos.idConfigurarJunta = configurarjunta.idConfigurarJunta
+//                where candidatos.idTipoCandidato = $idTipoCandidato and configurarjunta.idParroquia = $idParroquia
+//                GROUP by candidatos.idTipoCandidato
+//                ORDER by candidatos.puesto, numeroVotos DESC",Adapter::QUERY_MODE_EXECUTE)->toArray();
+//            
+//            if(count($listaTotalVotos)){
+//                $totalVotos = $listaTotalVotos[0]['numeroTotalVotos'];
+//            }
+//            
+//            $listaResultados = $this->dbAdapter->query("select listas.nombreLista, listas.numeroLista, listas.rutaFotoLista, 
+//                tipocandidato.identificadorTipoCandidato,
+//                candidatos.nombres,candidatos.rutaFotoCandidato, candidatos.puesto,
+//                SUM(totalvotos.numeroVotos) as numeroVotos
+//                from totalvotos  
+//                INNER join candidatos on totalvotos.idCandidato = candidatos.idCandidato
+//                INNER join listas on candidatos.idListaCandidato = listas.idLista
+//                INNER join tipocandidato on candidatos.idTipoCandidato = tipocandidato.idTipoCandidato
+//                INNER join configurarjunta on totalvotos.idConfigurarJunta = configurarjunta.idConfigurarJunta
+//                where candidatos.idTipoCandidato = $idTipoCandidato and configurarjunta.idParroquia = $idParroquia
+//                GROUP by candidatos.idCandidato
+//                ORDER by candidatos.puesto, numeroVotos DESC",Adapter::QUERY_MODE_EXECUTE)->toArray();
+//        }else if($idParroquia == "0" && $idConfigurarJunta == "0"){
+//            $titulo = '<h1 style="text-align:center;">RESULTADOS POR SEXO <br>'.$nombreSexo.'</h1>';
+//            $listaTotalVotos = $this->dbAdapter->query("select SUM(totalvotos.numeroVotos) as numeroTotalVotos
+//                from totalvotos  
+//                INNER join candidatos on totalvotos.idCandidato = candidatos.idCandidato
+//                INNER join listas on candidatos.idListaCandidato = listas.idLista
+//                INNER join tipocandidato on candidatos.idTipoCandidato = tipocandidato.idTipoCandidato
+//                INNER join configurarjunta on totalvotos.idConfigurarJunta = configurarjunta.idConfigurarJunta
+//                where candidatos.idTipoCandidato = $idTipoCandidato and configurarjunta.idSexo = $idSexo
+//                GROUP by candidatos.idTipoCandidato
+//                ORDER by candidatos.puesto, numeroVotos DESC",Adapter::QUERY_MODE_EXECUTE)->toArray();
+//            
+//            if(count($listaTotalVotos)){
+//                $totalVotos = $listaTotalVotos[0]['numeroTotalVotos'];
+//            }
+//            
+//            $listaResultados = $this->dbAdapter->query("select listas.nombreLista, listas.numeroLista, listas.rutaFotoLista, 
+//                tipocandidato.identificadorTipoCandidato,
+//                candidatos.nombres,candidatos.rutaFotoCandidato, candidatos.puesto,
+//                SUM(totalvotos.numeroVotos) as numeroVotos
+//                from totalvotos  
+//                INNER join candidatos on totalvotos.idCandidato = candidatos.idCandidato
+//                INNER join listas on candidatos.idListaCandidato = listas.idLista
+//                INNER join tipocandidato on candidatos.idTipoCandidato = tipocandidato.idTipoCandidato
+//                INNER join configurarjunta on totalvotos.idConfigurarJunta = configurarjunta.idConfigurarJunta
+//                where candidatos.idTipoCandidato = $idTipoCandidato and configurarjunta.idSexo = $idSexo
+//                GROUP by candidatos.idCandidato
+//                ORDER by candidatos.puesto, numeroVotos DESC",Adapter::QUERY_MODE_EXECUTE)->toArray();
+//        }else if($idConfigurarJunta == "0"){
+//            $titulo = '<h1 style="text-align:center;">RESULTADOS EN LA ZONA ELECTORAL '.$nombreParroquia.' <br> '.$nombreSexo.'</h1>';
+//            
+//            $listaTotalVotos = $this->dbAdapter->query("select SUM(totalvotos.numeroVotos) as numeroTotalVotos
+//                from totalvotos  
+//                INNER join candidatos on totalvotos.idCandidato = candidatos.idCandidato
+//                INNER join listas on candidatos.idListaCandidato = listas.idLista
+//                INNER join tipocandidato on candidatos.idTipoCandidato = tipocandidato.idTipoCandidato
+//                INNER join configurarjunta on totalvotos.idConfigurarJunta = configurarjunta.idConfigurarJunta
+//                where candidatos.idTipoCandidato = $idTipoCandidato and configurarjunta.idParroquia = $idParroquia
+//                and configurarjunta.idSexo = $idSexo
+//                GROUP by candidatos.idTipoCandidato
+//                ORDER by candidatos.puesto, numeroVotos DESC",Adapter::QUERY_MODE_EXECUTE)->toArray();
+//            
+//            if(count($listaTotalVotos)){
+//                $totalVotos = $listaTotalVotos[0]['numeroTotalVotos'];
+//            }
+//            
+//            $listaResultados = $this->dbAdapter->query("select listas.nombreLista, listas.numeroLista, listas.rutaFotoLista, 
+//                tipocandidato.identificadorTipoCandidato,
+//                candidatos.nombres,candidatos.rutaFotoCandidato, candidatos.puesto,
+//                SUM(totalvotos.numeroVotos) as numeroVotos
+//                from totalvotos  
+//                INNER join candidatos on totalvotos.idCandidato = candidatos.idCandidato
+//                INNER join listas on candidatos.idListaCandidato = listas.idLista
+//                INNER join tipocandidato on candidatos.idTipoCandidato = tipocandidato.idTipoCandidato
+//                INNER join configurarjunta on totalvotos.idConfigurarJunta = configurarjunta.idConfigurarJunta
+//                where candidatos.idTipoCandidato = $idTipoCandidato and configurarjunta.idParroquia = $idParroquia
+//                and configurarjunta.idSexo = $idSexo
+//                GROUP by candidatos.idCandidato
+//                ORDER by candidatos.puesto, numeroVotos DESC",Adapter::QUERY_MODE_EXECUTE)->toArray();
+//        }else{
+//            $titulo = '<h1 style="text-align:center;">RESULTADOS EN LA ZONA ELECTORAL '.$nombreParroquia.'<br> JUNTA '.$nombreSexo.' N° '.$nombreJunta.'</h1>';
+//            
+//            $listaTotalVotos = $this->dbAdapter->query("select SUM(totalvotos.numeroVotos) as numeroTotalVotos
+//                from totalvotos  
+//                INNER join candidatos on totalvotos.idCandidato = candidatos.idCandidato
+//                INNER join listas on candidatos.idListaCandidato = listas.idLista
+//                INNER join tipocandidato on candidatos.idTipoCandidato = tipocandidato.idTipoCandidato
+//                INNER join configurarjunta on totalvotos.idConfigurarJunta = configurarjunta.idConfigurarJunta
+//                where candidatos.idTipoCandidato = $idTipoCandidato and configurarjunta.idParroquia = $idParroquia
+//                and configurarjunta.idSexo = $idSexo and totalvotos.idConfigurarJunta = $idConfigurarJunta
+//                GROUP by candidatos.idTipoCandidato
+//                ORDER by candidatos.puesto, numeroVotos DESC",Adapter::QUERY_MODE_EXECUTE)->toArray();
+//            
+//            if(count($listaTotalVotos)){
+//                $totalVotos = $listaTotalVotos[0]['numeroTotalVotos'];
+//            }
+//            
+//            $listaResultados = $this->dbAdapter->query("select listas.nombreLista, listas.numeroLista, listas.rutaFotoLista, 
+//                tipocandidato.identificadorTipoCandidato,
+//                candidatos.nombres,candidatos.rutaFotoCandidato, candidatos.puesto,
+//                SUM(totalvotos.numeroVotos) as numeroVotos
+//                from totalvotos  
+//                INNER join candidatos on totalvotos.idCandidato = candidatos.idCandidato
+//                INNER join listas on candidatos.idListaCandidato = listas.idLista
+//                INNER join tipocandidato on candidatos.idTipoCandidato = tipocandidato.idTipoCandidato
+//                INNER join configurarjunta on totalvotos.idConfigurarJunta = configurarjunta.idConfigurarJunta
+//                where candidatos.idTipoCandidato = $idTipoCandidato and configurarjunta.idParroquia = $idParroquia
+//                and configurarjunta.idSexo = $idSexo and totalvotos.idConfigurarJunta = $idConfigurarJunta
+//                GROUP by candidatos.idCandidato
+//                ORDER by candidatos.puesto, numeroVotos DESC",Adapter::QUERY_MODE_EXECUTE)->toArray();
+//        }
+//        $filasResultado = '';
+//        $contador = 1;
+//        $porcentaje = 0;
+//        $totalPorcentaje = 0;
+//        foreach ($listaResultados as $valueResultado) {
+//            $colorFondo = '';
+//            if(($contador%2) == 0){
+//                $colorFondo = 'background-color: #D0F5FD;';
+//            }
+//            $porcentaje = ($valueResultado['numeroVotos']/$totalVotos)*100;
+//            
+//            $filasResultado = $filasResultado.'
+//                <tr>
+//                    <td style="text-align:center;vertical-align: middle;'.$colorFondo.'"><b>'.$contador.'</b></td>
+//                    <td style="text-align:center;vertical-align: middle;'.$colorFondo.'"><img  style="margin:0 auto 0 auto; text-align:center; width: 100%;" src="'.$this->getRequest()->getBaseUrl().$valueResultado['rutaFotoLista'].'"></td>
+//                    <td style="text-align:center;vertical-align: middle;'.$colorFondo.'"><b>'.$valueResultado['numeroLista'].'</b></td>
+//                    <td style="text-align:center;vertical-align: middle;'.$colorFondo.'"><img style="margin:0 auto 0 auto; text-align:center; width: 100%;" src="'.$this->getRequest()->getBaseUrl().$valueResultado['rutaFotoCandidato'].'"></td>
+//                    <td style="vertical-align: middle;'.$colorFondo.'"><b>'.$valueResultado['nombres'].'</b></td>
+//                    <td style="text-align:center;vertical-align: middle;'.$colorFondo.'"><b>'.$valueResultado['numeroVotos'].'</b></td>
+//                    <td style="text-align:center;vertical-align: middle;'.$colorFondo.'"><b>'.number_format($porcentaje,2).'%</b></td>
+//                </tr>
+//
+//            ';
+//            $contador++;
+//            $totalPorcentaje = $totalPorcentaje + $porcentaje;
+//            
+//        }
+//        $tabla = '';
+//        if($filasResultado != ""){
+//            $tabla = '<div class="table-responsive"><table class="table">
+//                <thead>
+//                <tr><th colspan="7" style="text-align:center;">'.$tipoCandidato.$titulo.'</th></tr>
+//                <tr> 
+//                    <th style="width: 5%;text-align:center;background-color:#3c8dbc">#</th>
+//                    <th style="width: 5%;text-align:center;background-color:#3c8dbc">LOGO</th>
+//                    <th style="width: 10%;text-align:center;background-color:#3c8dbc">LISTA</th>
+//                    <th style="width: 5%;text-align:center;background-color:#3c8dbc">FOTO</th>
+//                    <th style="width: 30%;text-align:center;background-color:#3c8dbc">CANDIDATO</th>
+//                    <th style="width: 30%;text-align:center;background-color:#3c8dbc">VOTOS</th>
+//                    <th style="width: 30%;text-align:center;background-color:#3c8dbc">%</th>
+//                </tr>
+//                </thead>
+//                <tbody>
+//                    '.$filasResultado.'
+//                    <tr>
+//                        <td colspan="5" style="text-align:center;background-color:#FCFFC9;"><b>TOTAL</b></td>
+//                        <td style="text-align:center;background-color:#FCFFC9;"><b>'.$totalVotos.'</b></td>
+//                        <td style="text-align:center;background-color:#FCFFC9;"><b>'.$totalPorcentaje.'%</b></td>
+//                    </tr>
+//                </tbody>
+//            </table></div>';
+//        }
+//        
+//        
+//        
+//        return $tabla;
+//    }
     
-    public function cargarResultadoAlcaldesPrefectoConcejalRural($idTipoCandidato, $idParroquia, $idSexo, $idConfigurarJunta,$descripcionTipoCandidato){
+    
+    
+    
+    public function cargarResultadoAlcaldesPrefectoConcejalRural($idTipoCandidato, $idParroquia, $idSexo, $idConfigurarJunta,$idLista,$descripcionTipoCandidato){
         $this->dbAdapter=$this->getServiceLocator()->get('Zend\Db\Adapter');
         $objParroquia = new Parroquia($this->dbAdapter);
         $objSexo = new Sexo($this->dbAdapter);
+        $objLista = new Listas($this->dbAdapter);
         $listaResultados = array();
         
         $listaParroquia = array();
         $listaSexo = array();
+        $listaLista = array();
         $nombreParroquia = "";
         $nombreSexo = "";
         $nombreJunta = "";
+        $nombreLista = "";
+        
+        $whereVotosInvalidos = "";
+        
         if($idParroquia != "0"){
+            $whereVotosInvalidos = $whereVotosInvalidos." and configurarjunta.idParroquia = $idParroquia ";
             $listaParroquia = $objParroquia->filtrarParroquia($idParroquia);
             $nombreParroquia = $listaParroquia[0]['nombreParroquia'];
         }
         if($idSexo != "0"){
+            $whereVotosInvalidos = $whereVotosInvalidos." and configurarjunta.idSexo = $idSexo ";
             $listaSexo = $objSexo->filtrarSexo($idSexo);
             $nombreSexo = $listaSexo[0]['descripcionSexo'];
         }    
+        
         if($idConfigurarJunta != "0"){
+            $whereVotosInvalidos = $whereVotosInvalidos." and totalvotosinvalidos.idConfigurarJuntaElectoral = $idConfigurarJunta ";
+            
             $listaJunta = $this->dbAdapter->query("SELECT juntaelectoral.*
             from configurarjunta inner JOIN juntaelectoral on configurarjunta.idJuntaElectoral = juntaelectoral.idJuntaElectoral
             where configurarjunta.idConfigurarJunta = $idConfigurarJunta",Adapter::QUERY_MODE_EXECUTE)->toArray();
             $nombreJunta = $listaJunta[0]['numeroJunta'];
         }
+        $where = "";
+        if($idLista != "0"){
+            $where = " and candidatos.idListaCandidato = $idLista " ;
+            $listaLista = $objLista->filtrarLista($idLista);
+            $nombreLista = $listaLista[0]['nombreLista'];
+        }
         
+        $listaTotalVotosInvalidos = $this->dbAdapter->query("SELECT SUM(totalvotosinvalidos.numeroVotos) as numeroVotos, tipototalvotosinvalidos.identificadorTipoVotoInvalido
+        from totalvotosinvalidos
+        inner join tipototalvotosinvalidos on totalvotosinvalidos.idTipoVotoInvalido = tipototalvotosinvalidos.idTipoVotosInvalidos
+        inner join configurarjunta on totalvotosinvalidos.idConfigurarJuntaElectoral = configurarjunta.idConfigurarJunta
+        where totalvotosinvalidos.idTipoCandidato = $idTipoCandidato ".$whereVotosInvalidos." 
+        group by totalvotosinvalidos.idTipoVotoInvalido",Adapter::QUERY_MODE_EXECUTE)->toArray();
         
+
         $titulo ="";
         $tipoCandidato='';
         $totalVotos=0;
         if($idParroquia == "0" && $idSexo == "0" && $idConfigurarJunta == "0"){
+            
             $tipoCandidato = '<h1 style="text-align:center; color:">'.$descripcionTipoCandidato.'</h1>';
             $titulo = '<h1 style="text-align:center; color:" >RESULTADOS GENERALES</h1>';
             $listaTotalVotos = $this->dbAdapter->query("select SUM(totalvotos.numeroVotos) as numeroTotalVotos
@@ -130,7 +437,7 @@ class ResultadosController extends AbstractActionController
                 INNER join candidatos on totalvotos.idCandidato = candidatos.idCandidato
                 INNER join listas on candidatos.idListaCandidato = listas.idLista
                 INNER join tipocandidato on candidatos.idTipoCandidato = tipocandidato.idTipoCandidato
-                where candidatos.idTipoCandidato = $idTipoCandidato
+                where candidatos.idTipoCandidato = $idTipoCandidato  
                 GROUP by candidatos.idTipoCandidato
                 ORDER by candidatos.puesto, numeroVotos DESC",Adapter::QUERY_MODE_EXECUTE)->toArray();
             if(count($listaTotalVotos)){
@@ -138,6 +445,7 @@ class ResultadosController extends AbstractActionController
             }
             
             
+
             $listaResultados = $this->dbAdapter->query("select listas.nombreLista, listas.numeroLista, listas.rutaFotoLista, 
                 tipocandidato.identificadorTipoCandidato,
                 candidatos.nombres,candidatos.rutaFotoCandidato, candidatos.puesto,
@@ -146,9 +454,10 @@ class ResultadosController extends AbstractActionController
                 INNER join candidatos on totalvotos.idCandidato = candidatos.idCandidato
                 INNER join listas on candidatos.idListaCandidato = listas.idLista
                 INNER join tipocandidato on candidatos.idTipoCandidato = tipocandidato.idTipoCandidato
-                where candidatos.idTipoCandidato = $idTipoCandidato
+                where candidatos.idTipoCandidato = $idTipoCandidato ".$where."
                 GROUP by candidatos.idCandidato
                 ORDER by candidatos.puesto, numeroVotos DESC",Adapter::QUERY_MODE_EXECUTE)->toArray();
+            
         }else if($idSexo == "0" && $idConfigurarJunta == "0"){
             $titulo = '<h1 style="text-align:center;">RESULTADOS EN LA ZONA ELECTORAL '.$nombreParroquia.'</h1>';
             $listaTotalVotos = $this->dbAdapter->query("select SUM(totalvotos.numeroVotos) as numeroTotalVotos
@@ -156,7 +465,8 @@ class ResultadosController extends AbstractActionController
                 INNER join candidatos on totalvotos.idCandidato = candidatos.idCandidato
                 INNER join listas on candidatos.idListaCandidato = listas.idLista
                 INNER join tipocandidato on candidatos.idTipoCandidato = tipocandidato.idTipoCandidato
-                where candidatos.idTipoCandidato = $idTipoCandidato and configurarjunta.idParroquia = $idParroquia
+                INNER join configurarjunta on totalvotos.idConfigurarJunta = configurarjunta.idConfigurarJunta
+                where candidatos.idTipoCandidato = $idTipoCandidato and configurarjunta.idParroquia = $idParroquia  
                 GROUP by candidatos.idTipoCandidato
                 ORDER by candidatos.puesto, numeroVotos DESC",Adapter::QUERY_MODE_EXECUTE)->toArray();
             
@@ -173,7 +483,7 @@ class ResultadosController extends AbstractActionController
                 INNER join listas on candidatos.idListaCandidato = listas.idLista
                 INNER join tipocandidato on candidatos.idTipoCandidato = tipocandidato.idTipoCandidato
                 INNER join configurarjunta on totalvotos.idConfigurarJunta = configurarjunta.idConfigurarJunta
-                where candidatos.idTipoCandidato = $idTipoCandidato and configurarjunta.idParroquia = $idParroquia
+                where candidatos.idTipoCandidato = $idTipoCandidato and configurarjunta.idParroquia = $idParroquia ".$where." 
                 GROUP by candidatos.idCandidato
                 ORDER by candidatos.puesto, numeroVotos DESC",Adapter::QUERY_MODE_EXECUTE)->toArray();
         }else if($idParroquia == "0" && $idConfigurarJunta == "0"){
@@ -183,7 +493,8 @@ class ResultadosController extends AbstractActionController
                 INNER join candidatos on totalvotos.idCandidato = candidatos.idCandidato
                 INNER join listas on candidatos.idListaCandidato = listas.idLista
                 INNER join tipocandidato on candidatos.idTipoCandidato = tipocandidato.idTipoCandidato
-                where candidatos.idTipoCandidato = $idTipoCandidato and configurarjunta.idSexo = $idSexo
+                INNER join configurarjunta on totalvotos.idConfigurarJunta = configurarjunta.idConfigurarJunta
+                where candidatos.idTipoCandidato = $idTipoCandidato and configurarjunta.idSexo = $idSexo 
                 GROUP by candidatos.idTipoCandidato
                 ORDER by candidatos.puesto, numeroVotos DESC",Adapter::QUERY_MODE_EXECUTE)->toArray();
             
@@ -200,7 +511,7 @@ class ResultadosController extends AbstractActionController
                 INNER join listas on candidatos.idListaCandidato = listas.idLista
                 INNER join tipocandidato on candidatos.idTipoCandidato = tipocandidato.idTipoCandidato
                 INNER join configurarjunta on totalvotos.idConfigurarJunta = configurarjunta.idConfigurarJunta
-                where candidatos.idTipoCandidato = $idTipoCandidato and configurarjunta.idSexo = $idSexo
+                where candidatos.idTipoCandidato = $idTipoCandidato and configurarjunta.idSexo = $idSexo ".$where." 
                 GROUP by candidatos.idCandidato
                 ORDER by candidatos.puesto, numeroVotos DESC",Adapter::QUERY_MODE_EXECUTE)->toArray();
         }else if($idConfigurarJunta == "0"){
@@ -211,8 +522,9 @@ class ResultadosController extends AbstractActionController
                 INNER join candidatos on totalvotos.idCandidato = candidatos.idCandidato
                 INNER join listas on candidatos.idListaCandidato = listas.idLista
                 INNER join tipocandidato on candidatos.idTipoCandidato = tipocandidato.idTipoCandidato
+                INNER join configurarjunta on totalvotos.idConfigurarJunta = configurarjunta.idConfigurarJunta
                 where candidatos.idTipoCandidato = $idTipoCandidato and configurarjunta.idParroquia = $idParroquia
-                and configurarjunta.idSexo = $idSexo
+                and configurarjunta.idSexo = $idSexo 
                 GROUP by candidatos.idTipoCandidato
                 ORDER by candidatos.puesto, numeroVotos DESC",Adapter::QUERY_MODE_EXECUTE)->toArray();
             
@@ -230,7 +542,7 @@ class ResultadosController extends AbstractActionController
                 INNER join tipocandidato on candidatos.idTipoCandidato = tipocandidato.idTipoCandidato
                 INNER join configurarjunta on totalvotos.idConfigurarJunta = configurarjunta.idConfigurarJunta
                 where candidatos.idTipoCandidato = $idTipoCandidato and configurarjunta.idParroquia = $idParroquia
-                and configurarjunta.idSexo = $idSexo
+                and configurarjunta.idSexo = $idSexo ".$where." 
                 GROUP by candidatos.idCandidato
                 ORDER by candidatos.puesto, numeroVotos DESC",Adapter::QUERY_MODE_EXECUTE)->toArray();
         }else{
@@ -241,6 +553,7 @@ class ResultadosController extends AbstractActionController
                 INNER join candidatos on totalvotos.idCandidato = candidatos.idCandidato
                 INNER join listas on candidatos.idListaCandidato = listas.idLista
                 INNER join tipocandidato on candidatos.idTipoCandidato = tipocandidato.idTipoCandidato
+                INNER join configurarjunta on totalvotos.idConfigurarJunta = configurarjunta.idConfigurarJunta
                 where candidatos.idTipoCandidato = $idTipoCandidato and configurarjunta.idParroquia = $idParroquia
                 and configurarjunta.idSexo = $idSexo and totalvotos.idConfigurarJunta = $idConfigurarJunta
                 GROUP by candidatos.idTipoCandidato
@@ -260,14 +573,59 @@ class ResultadosController extends AbstractActionController
                 INNER join tipocandidato on candidatos.idTipoCandidato = tipocandidato.idTipoCandidato
                 INNER join configurarjunta on totalvotos.idConfigurarJunta = configurarjunta.idConfigurarJunta
                 where candidatos.idTipoCandidato = $idTipoCandidato and configurarjunta.idParroquia = $idParroquia
-                and configurarjunta.idSexo = $idSexo and totalvotos.idConfigurarJunta = $idConfigurarJunta
+                and configurarjunta.idSexo = $idSexo and totalvotos.idConfigurarJunta = $idConfigurarJunta ".$where." 
                 GROUP by candidatos.idCandidato
                 ORDER by candidatos.puesto, numeroVotos DESC",Adapter::QUERY_MODE_EXECUTE)->toArray();
         }
+        
+        $filaVotosInvalidos = '';
+        $totalVotosNulos = 0;
+        $totalVotosBlanco = 0;
+        if(count($listaTotalVotosInvalidos) > 0){
+            foreach ($listaTotalVotosInvalidos as $valueVotosInvalidos) {
+                if($valueVotosInvalidos['identificadorTipoVotoInvalido'] == 1){
+                    $totalVotosNulos = $valueVotosInvalidos['numeroVotos'];
+                }else{
+                    $totalVotosBlanco = $valueVotosInvalidos['numeroVotos'];
+                }
+                $totalVotos = $totalVotos + $valueVotosInvalidos['numeroVotos'];
+            }
+            $porcentajeNulos = 0;
+            $porcentajeBlanco = 0;
+            foreach ($listaTotalVotosInvalidos as $valueVotosInvalidos) {
+                if($valueVotosInvalidos['identificadorTipoVotoInvalido'] == 1){
+                    $porcentajeNulos = ($totalVotosNulos/$totalVotos)*100;
+                    $filaVotosInvalidos = $filaVotosInvalidos.'<tr>
+                    <td style="text-align:center;vertical-align: middle; background-color: #FFDCD6;"></td>
+                    <td style="text-align:center;vertical-align: middle; background-color: #FFDCD6;"></td>
+                    <td style="text-align:center;vertical-align: middle; background-color: #FFDCD6;"></td>
+                    <td style="text-align:center;vertical-align: middle; background-color: #FFDCD6;"></td>
+                    <td style="vertical-align: middle; background-color: #FFDCD6;"><b>VOTOS NULOS</b></td>
+                    <td style="text-align:center;vertical-align: middle; background-color: #FFDCD6;"><b>'.$valueVotosInvalidos['numeroVotos'].'</b></td>
+                    <td style="text-align:center;vertical-align: middle; background-color: #FFDCD6;"><b>'.  number_format($porcentajeNulos,2).'%</b></td>
+                </tr>';
+                }else{
+                    $porcentajeBlanco = ($totalVotosBlanco/$totalVotos)*100;
+                    $filaVotosInvalidos = $filaVotosInvalidos.'<tr>
+                    <td style="text-align:center;vertical-align: middle; background-color: #FFDCD6;"></td>
+                    <td style="text-align:center;vertical-align: middle; background-color: #FFDCD6;"></td>
+                    <td style="text-align:center;vertical-align: middle; background-color: #FFDCD6;"></td>
+                    <td style="text-align:center;vertical-align: middle; background-color: #FFDCD6;"></td>
+                    <td style="vertical-align: middle; background-color: #FFDCD6;"><b>VOTOS EN BLANCO</b></td>
+                    <td style="text-align:center;vertical-align: middle; background-color: #FFDCD6;"><b>'.$valueVotosInvalidos['numeroVotos'].'</b></td>
+                    <td style="text-align:center;vertical-align: middle; background-color: #FFDCD6;"><b>'.  number_format($porcentajeBlanco,2).'%</b></td>
+                </tr>';
+                }
+            }
+        }
+        
+        
+        
         $filasResultado = '';
         $contador = 1;
         $porcentaje = 0;
         $totalPorcentaje = 0;
+        
         foreach ($listaResultados as $valueResultado) {
             $colorFondo = '';
             if(($contador%2) == 0){
@@ -277,7 +635,7 @@ class ResultadosController extends AbstractActionController
             
             $filasResultado = $filasResultado.'
                 <tr>
-                    <td style="'.$colorFondo.'"><b>'.$contador.'</b></td>
+                    <td style="text-align:center;vertical-align: middle;'.$colorFondo.'"><b>'.$contador.'</b></td>
                     <td style="text-align:center;vertical-align: middle;'.$colorFondo.'"><img  style="margin:0 auto 0 auto; text-align:center; width: 100%;" src="'.$this->getRequest()->getBaseUrl().$valueResultado['rutaFotoLista'].'"></td>
                     <td style="text-align:center;vertical-align: middle;'.$colorFondo.'"><b>'.$valueResultado['numeroLista'].'</b></td>
                     <td style="text-align:center;vertical-align: middle;'.$colorFondo.'"><img style="margin:0 auto 0 auto; text-align:center; width: 100%;" src="'.$this->getRequest()->getBaseUrl().$valueResultado['rutaFotoCandidato'].'"></td>
@@ -291,8 +649,22 @@ class ResultadosController extends AbstractActionController
             $totalPorcentaje = $totalPorcentaje + $porcentaje;
             
         }
+         
+        
+        
         $tabla = '';
         if($filasResultado != ""){
+            
+            $totalPorcentaje = $totalPorcentaje + $porcentajeNulos + $porcentajeBlanco;
+            $filaSumaTotal = "";
+            if($idLista == "0"){
+                $filaSumaTotal = '<tr>
+                        <td colspan="5" style="text-align:center;background-color:#FCFFC9;"><b>TOTAL</b></td>
+                        <td style="text-align:center;background-color:#FCFFC9;"><b>'.$totalVotos.'</b></td>
+                        <td style="text-align:center;background-color:#FCFFC9;"><b>'.number_format($totalPorcentaje,2).'%</b></td>
+                    </tr>';
+            }
+            
             $tabla = '<div class="table-responsive"><table class="table">
                 <thead>
                 <tr><th colspan="7" style="text-align:center;">'.$tipoCandidato.$titulo.'</th></tr>
@@ -308,11 +680,8 @@ class ResultadosController extends AbstractActionController
                 </thead>
                 <tbody>
                     '.$filasResultado.'
-                    <tr>
-                        <td colspan="5" style="text-align:center;background-color:#FCFFC9;"><b>TOTAL</b></td>
-                        <td style="text-align:center;background-color:#FCFFC9;"><b>'.$totalVotos.'</b></td>
-                        <td style="text-align:center;background-color:#FCFFC9;"><b>'.$totalPorcentaje.'%</b></td>
-                    </tr>
+                    '.$filaVotosInvalidos.'
+                    '.$filaSumaTotal.'
                 </tbody>
             </table></div>';
         }
@@ -380,6 +749,49 @@ class ResultadosController extends AbstractActionController
         return new JsonModel(array('mensaje'=>$mensaje,'validar'=>$validar));
     }
     
+    public function filtrarlistaportipocandidatoAction()
+    {
+        $mensaje = '<div class="alert alert-danger text-center" role="alert">OCURRIÓ UN ERROR INESPERADO</div>';
+        $validar = false;
+        $request=$this->getRequest();
+        if(!$request->isPost()){
+            $this->redirect()->toUrl($this->getRequest()->getBaseUrl().'/index/index');
+        }else{
+            $this->dbAdapter=$this->getServiceLocator()->get('Zend\Db\Adapter');
+           
+            $post = array_merge_recursive(
+                $request->getPost()->toArray(),
+                $request->getFiles()->toArray()
+            );
+            $idTipoCandidato = $post['idTipoCandidato'];
+            if($idTipoCandidato == "" || $idTipoCandidato == NULL){
+                $mensaje = '<div class="alert alert-danger text-center" role="alert">NO SE ENCUENTRA EL ÍNDICE DEL TIPO DE CANDIDATO</div>';
+            }else{
+                $objTipoCandidato = new TipoCandidato($this->dbAdapter);
+                $listaTipoCandidato = $objTipoCandidato->filtrarTipoCandidato($idTipoCandidato);
+                
+                if(count($listaTipoCandidato) == 0){
+                    $mensaje = '<div class="alert alert-danger text-center" role="alert">EL TIPO DE CANDIDATO SELECCIONADO NO EXISTE EN LA BASE DE DATOS</div>';
+                }else{
+                    
+                    $listaListas = $this->dbAdapter->query("SELECT DISTINCT listas.* FROM candidatos
+                        INNER JOIN listas on candidatos.idListaCandidato = listas.idLista
+                        where candidatos.idTipoCandidato=$idTipoCandidato",Adapter::QUERY_MODE_EXECUTE)->toArray();
+                          $optionListasCandidatos='<option value="0" style="font-weight: bold;">TODAS LAS LISTAS</option>';
+                         foreach ($listaListas as $valueListasC) {
+                               $optionListasCandidatos=$optionListasCandidatos.'<option style="font-weight: bold;" value="'.$valueListasC['idLista'].'">'.$valueListasC['numeroLista'].' - '.$valueListasC['nombreLista'].'</option>'; 
+                            }
+                    $mensaje = '';
+                    $validar = TRUE;
+                    return new JsonModel(array('mensaje'=>$mensaje,'validar'=>$validar,'tabla'=>$optionListasCandidatos));
+                    
+                }
+            }
+        }        
+        return new JsonModel(array('mensaje'=>$mensaje,'validar'=>$validar));
+    }
+    
+    
     public function obtenerformularioAction()
     {
         $mensaje = '<div class="alert alert-danger text-center" role="alert">OCURRIÓ UN ERROR INESPERADO</div>';
@@ -422,11 +834,10 @@ class ResultadosController extends AbstractActionController
                     }
                     
                     
+                    
                     $selectJuntas = '<select style="font-weight: bold;" class="form-control" id="selectJuntas" onchange="filtrarResultados();"><option value="0" style="font-weight: bold;">TODAS LAS JUNTAS</option></select>';
-                    
-                    
-                    
-                    $selectTipoCandidato = '<select style="font-weight: bold;" class="form-control" id="selectTipoCandidato" onchange="filtrarResultados();">'.$optionTipoCandidato.'</select>';
+                    $selectListas = '<select style="font-weight: bold;" class="form-control" id="selectListas" onchange="filtrarResultados();"><option value="0" style="font-weight: bold;">TODAS LAS LISTAS</option></select>';
+                    $selectTipoCandidato = '<select style="font-weight: bold;" class="form-control" id="selectTipoCandidato" onchange="filtrarlistasportipocandidato();filtrarResultados();">'.$optionTipoCandidato.'</select>';
                     $selectParroquias = '<select style="font-weight: bold;" class="form-control" id="selectParroquias" onchange="filtrarJuntasElectorales();filtrarResultados();">'.$optionParroquia.'</select>';
                     $selectSexo = '<select style="font-weight: bold;" class="form-control" id="selectSexo" onchange="filtrarJuntasElectorales();filtrarResultados();">'.$optionSexo.'</select>';
                     $tabla = '<div id="mensajeFormResultados" class="col-lg-12">
@@ -437,6 +848,7 @@ class ResultadosController extends AbstractActionController
                                 <div class="form-group col-lg-3">'.$selectParroquias.'</div>
                                 <div class="form-group col-lg-3">'.$selectSexo.'</div>
                                 <div class="form-group col-lg-3">'.$selectJuntas.'</div>
+                                <div class="form-group col-lg-6">'.$selectListas.'</div>
                             </div>
                             <div id="contenedorTablaResultados" class="col-lg-12"></div>';
                     $mensaje = '';

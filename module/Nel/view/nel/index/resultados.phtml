@@ -21,6 +21,7 @@
                                 <li class="active"><a style="cursor: pointer;" href="#resultadosPorCandidatura" onclick="obtenerFormulario(1,'resultadosPorCandidatura');" data-toggle="tab" aria-expanded="true">RESULTADOS POR CANDIDATURA</a></li>
                             </ul>
                             <div class="tab-content">
+                                
                                 <div id="resultadosPorCandidatura" class="tab-pane active">    
                                     
                                 </div>
@@ -40,12 +41,62 @@
     })
 </script>
 <script type="text/javascript">
+    function filtrarlistasportipocandidato()
+    {
+        var idTipoCandidato =$('#selectTipoCandidato').val();
+        if(idTipoCandidato=="0"){
+             $('#selectListas').html('<option style="font-weight: bold;" value="0">TODAS LAS LISTAS</option>');
+        } 
+        else{
+            $.ajax({
+                url : '<?php echo $this->basePath();?>/resultados/filtrarlistaportipocandidato',
+                type: 'post',
+                dataType: 'JSON',
+                data: { idTipoCandidato:idTipoCandidato},
+                beforeSend: function(){
+                    $('#selectListas').html("<option style='font-weight: bold;' value='0'>CARGANDO...</option>");
+                },
+                uploadProgress: function(event,position,total,percentComplete){
+                },
+                success: function(data){  
+                    if(data.validar == true){
+                        $('#selectListas').html(data.tabla);
+                    }else{
+                        $('#selectListas').html("<option style='font-weight: bold;' value='0'>TODAS LAS LISTAS</option>");
+                    }
+                },
+                complete: function(){
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                     $('#selectListas').html("<option style='font-weight: bold;' value='0'>TODAS LAS LISTAS</option>");
+                    if(xhr.status === 0){
+                        $("#mensajeResultadosEncuesta").html('<div class="alert alert-danger text-center" role="alert">NO HAY CONEXIÓN A INTERNET. VERIFICA LA RED</div>');
+                    }else if(xhr.status == 404){
+                        $("#mensajeResultadosEncuesta").html('<div class="alert alert-danger text-center" role="alert">ERROR [404]. P�?GINA NO ENCONTRADA</div>');
+                    }else if(xhr.status == 500){
+                        $("#mensajeResultadosEncuesta").html('<div class="alert alert-danger text-center" role="alert">ERROR DEL SERVIDOR [500]</div>');
+                    }else if(errorThrown === 'parsererror'){
+                        $("#mensajeResultadosEncuesta").html('<div class="alert alert-danger text-center" role="alert">LA PETICIÓN JSON HA FALLADO </div>');
+                    }else if(errorThrown === 'timeout'){
+                        $("#mensajeResultadosEncuesta").html('<div class="alert alert-danger text-center" role="alert">TIEMPO DE ESPERA TERMINADO</div>');
+                    }else if(errorThrown === 'abort'){
+                        $("#mensajeResultadosEncuesta").html('<div class="alert alert-danger text-center" role="alert">LA PETICIÓN AJAX FUE ABORTADA</div>');
+                    }else{
+                        $("#mensajeResultadosEncuesta").html('<div class="alert alert-danger text-center" role="alert">OCURRIÓ UN ERROR INESPERADO</div>');
+                    }
+                }
+            }); 
+        }
+    }
+</script>
+<script type="text/javascript">
     function filtrarResultados()
     {
         var idTipoCandidato = $('#selectTipoCandidato').val();
         var idParroquia = $('#selectParroquias').val();
         var idConfigurarJunta = $('#selectJuntas').val();
         var idSexo = $("#selectSexo").val();
+        var idLista = $("#selectListas").val();
         if(idTipoCandidato=="0")
         {
             $("#mensajeFormResultados").html("");
@@ -55,7 +106,7 @@
                 url : '<?php echo $this->basePath();?>/resultados/filtrarresultados',
                 type: 'post',
                 dataType: 'JSON',
-                data: {idTipoCandidato: idTipoCandidato, idParroquia: idParroquia,idConfigurarJunta:idConfigurarJunta,idSexo:idSexo },
+                data: {idTipoCandidato: idTipoCandidato, idParroquia: idParroquia,idConfigurarJunta:idConfigurarJunta,idSexo:idSexo,idLista:idLista },
                 beforeSend: function(){
                     $("#mensajeFormResultados").html("");
                     cargandoResultados('contenedorTablaResultados');
