@@ -18,14 +18,16 @@
                     <div id="contenedorResultadosEncuesta" class="col-lg-12 box ">
                         <div class="nav-tabs-custom">
                             <ul class="nav nav-tabs">
-                                <li class="active"><a style="cursor: pointer;" href="#resultadosPorCandidatura" onclick="obtenerFormulario(1,'resultadosPorCandidatura');" data-toggle="tab" aria-expanded="true">RESULTADOS POR CANDIDATURA</a></li>
+                                <li class="active"><a style="cursor: pointer;" href="#resultadosPorCandidatura" onclick="obtenerFormulario(1,'resultadosPorCandidatura');" data-toggle="tab" aria-expanded="true">RESULTADOS GENERALES</a></li>
+                                <li><a style="cursor: pointer;" href="#ganadores" onclick="obtenerFormulario(2,'ganadores');" data-toggle="tab" aria-expanded="true">GANADORES</a></li>
                             </ul>
                             <div class="tab-content">
-                                
                                 <div id="resultadosPorCandidatura" class="tab-pane active">    
                                     
                                 </div>
-                                
+                                <div id="ganadores" class="tab-pane active">    
+                                    
+                                </div>
                             </div>
                         </div>
 
@@ -40,6 +42,57 @@
         obtenerFormulario(1,'resultadosPorCandidatura');
     })
 </script>
+<script type="text/javascript">
+    function filtrarGanadorePorTipo()
+    {
+        var idTipoCandidato = $('#selectTipoCandidatoGanador').val();
+        if(idTipoCandidato=="0")
+        {
+            $('#contenedorTablaGanadores').html("");
+        }else{
+            $.ajax({
+                url : '<?php echo $this->basePath();?>/resultados/filtrarganadores',
+                type: 'post',
+                dataType: 'JSON',
+                data: {idTipoCandidato: idTipoCandidato},
+                beforeSend: function(){
+                    $("#mensajeGanadores").html("");
+                    cargandoResultados('contenedorTablaGanadores');
+                },
+                uploadProgress: function(event,position,total,percentComplete){
+                },
+                success: function(data){  
+                    if(data.validar == true){
+                        $('#contenedorTablaGanadores').html(data.tabla);
+                    }else{
+                        $('#contenedorTablaGanadores').html(data.mensaje);
+                        
+                    }
+                },
+                complete: function(){
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    if(xhr.status === 0){
+                        $("#contenedorTablaGanadores").html('<div class="alert alert-danger text-center" role="alert">NO HAY CONEXIÓN A INTERNET. VERIFICA LA RED</div>');
+                    }else if(xhr.status == 404){
+                        $("#contenedorTablaGanadores").html('<div class="alert alert-danger text-center" role="alert">ERROR [404]. PÁGINA NO ENCONTRADA</div>');
+                    }else if(xhr.status == 500){
+                        $("#contenedorTablaGanadores").html('<div class="alert alert-danger text-center" role="alert">ERROR DEL SERVIDOR [500]</div>');
+                    }else if(errorThrown === 'parsererror'){
+                        $("#contenedorTablaGanadores").html('<div class="alert alert-danger text-center" role="alert">LA PETICIÓN JSON HA FALLADO </div>');
+                    }else if(errorThrown === 'timeout'){
+                        $("#contenedorTablaGanadores").html('<div class="alert alert-danger text-center" role="alert">TIEMPO DE ESPERA TERMINADO</div>');
+                    }else if(errorThrown === 'abort'){
+                        $("#contenedorTablaGanadores").html('<div class="alert alert-danger text-center" role="alert">LA PETICIÓN AJAX FUE ABORTADA</div>');
+                    }else{
+                        $("#contenedorTablaGanadores").html('<div class="alert alert-danger text-center" role="alert">OCURRIÓ UN ERROR INESPERADO</div>');
+                    }
+                }
+            }); 
+        }
+    }
+</script>
+
 <script type="text/javascript">
     function filtrarlistasportipocandidato()
     {
