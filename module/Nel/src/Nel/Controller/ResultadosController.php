@@ -114,10 +114,100 @@ class ResultadosController extends AbstractActionController
                             $mensaje = '<div class="alert alert-danger text-center" role="alert">AÚN NO SE HAN INGRESADO LOS VOTOS</div>';
                         }
                     }else if($listaTipoCandidato[0]['identificadorTipoCandidato'] == 2 || $listaTipoCandidato[0]['identificadorTipoCandidato'] == 4 || $listaTipoCandidato[0]['identificadorTipoCandidato'] == 5){
+                        
+                        $listaNumeroPuestos = $this->dbAdapter->query("SELECT MAX(candidatos.puesto) as puesto
+                            FROM candidatos 
+                            WHERE candidatos.idTipoCandidato = $idTipoCandidato
+                            LIMIT 1",Adapter::QUERY_MODE_EXECUTE)->toArray();
+                        
+                        
+                        $arrayFinal = array();
+                        $i=0;
+                        if(count($listaNumeroPuestos) > 0){
+                        
+                            $numeroPuestos = $listaNumeroPuestos[0]['puesto'];
 
-                        if($tabla != ""){
-                            $mensaje = '';
-                            $validar = TRUE;
+                            $listaVotosPorLista = $this->dbAdapter->query("select listas.*, SUM(totalvotos.numeroVotos) as numeroVotos
+                                from totalvotos
+                                inner join candidatos on totalvotos.idCandidato = candidatos.idCandidato
+                                inner join listas on candidatos.idListaCandidato = listas.idLista
+                                where candidatos.idTipoCandidato = $idTipoCandidato
+                                GROUP BY candidatos.idListaCandidato
+                                ORDER BY numeroVotos DESC",Adapter::QUERY_MODE_EXECUTE)->toArray();
+                        
+                            foreach ($listaVotosPorLista as $valueVotosPorLista) {
+                                $idLista = $valueVotosPorLista['idLista'];
+                                $votosPorLista = $valueVotosPorLista['numeroVotos'];
+                                $listaCandidatos = $this->dbAdapter->query("select candidatos.*, SUM(totalvotos.numeroVotos) as votos
+                                    from totalvotos
+                                    inner join candidatos on totalvotos.idCandidato = candidatos.idCandidato
+                                    where candidatos.idListaCandidato = $idLista and candidatos.idTipoCandidato = $idTipoCandidato
+                                    GROUP BY totalvotos.idCandidato
+                                    ORDER BY candidatos.puesto",Adapter::QUERY_MODE_EXECUTE)->toArray();
+                                
+                                foreach ($listaCandidatos as $valueCandidatos) {
+                                    $votos = $votosPorLista/$valueCandidatos['puesto'];
+                                    
+                                    $arrayFinal[$i] = array(
+                                      'idCandidato'=>$valueCandidatos['idCandidato'],
+                                        'rutaFotoLista'=>$valueVotosPorLista['rutaFotoLista'],
+                                        'numeroLista'=>$valueVotosPorLista['numeroLista'],
+                                        'nombres'=>$valueCandidatos['nombres'],
+                                        'rutaFotoCandidato'=>$valueCandidatos['rutaFotoCandidato'],
+                                        'puesto'=>$valueCandidatos['puesto'],
+                                        'votos'=>  number_format($votos,2)
+                                    );                                    
+                                    $i++;
+                                }
+                            }
+                        
+                            $this->array_sort_by($arrayFinal, 'votos', $order = SORT_DESC);
+                  
+                            $filasResultado = '';
+                             $contador = 1;
+                             foreach ($arrayFinal as $valueResultado) {
+                                 if($contador <= $numeroPuestos){
+                                    $colorFondo = '';
+                                     $filasResultado = $filasResultado.'
+                                       <tr>
+                                           <td style="text-align:center;vertical-align: middle;'.$colorFondo.'"><b>'.$contador.'</b></td>
+                                           <td style="text-align:center;vertical-align: middle;'.$colorFondo.'"><img  style="margin:0 auto 0 auto; text-align:center; width: 100%;" src="'.$this->getRequest()->getBaseUrl().$valueResultado['rutaFotoLista'].'"></td>
+                                           <td style="text-align:center;vertical-align: middle;'.$colorFondo.'"><b>'.$valueResultado['numeroLista'].'</b></td>
+                                           <td style="text-align:center;vertical-align: middle;'.$colorFondo.'"><img style="margin:0 auto 0 auto; text-align:center; width: 100%;" src="'.$this->getRequest()->getBaseUrl().$valueResultado['rutaFotoCandidato'].'"></td>
+                                           <td style="vertical-align: middle;'.$colorFondo.'"><b>'.$valueResultado['nombres'].'</b></td>
+                                           <td style="text-align:center;vertical-align: middle;'.$colorFondo.'"><b>'.$valueResultado['votos'].'</b></td>
+                                       </tr>
+                                   ';
+                                     $contador++;
+                                 }else{
+                                     break;
+                                 }
+                             }
+                            if($filasResultado != ""){
+                                $tabla = '<div class="table-responsive"><table class="table">
+                                    <thead>
+                                    <tr> 
+                                        <th style="width: 5%;text-align:center;background-color:#3c8dbc">#</th>
+                                        <th style="width: 5%;text-align:center;background-color:#3c8dbc">LOGO</th>
+                                        <th style="width: 10%;text-align:center;background-color:#3c8dbc">LISTA</th>
+                                        <th style="width: 5%;text-align:center;background-color:#3c8dbc">FOTO</th>
+                                        <th style="width: 30%;text-align:center;background-color:#3c8dbc">CANDIDATO</th>
+                                        <th style="width: 30%;text-align:center;background-color:#3c8dbc">VOTOS</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        '.$filasResultado.'
+                                    </tbody>
+                                </table></div>';
+                            }
+                            
+                        
+                            if($tabla != ""){
+                                $mensaje = '';
+                                $validar = TRUE;
+                            }else{
+                                $mensaje = '<div class="alert alert-danger text-center" role="alert">AÚN NO SE HAN INGRESADO LOS VOTOS</div>';
+                            }
                         }else{
                             $mensaje = '<div class="alert alert-danger text-center" role="alert">AÚN NO SE HAN INGRESADO LOS VOTOS</div>';
                         }
@@ -136,7 +226,17 @@ class ResultadosController extends AbstractActionController
         return new JsonModel(array('mensaje'=>$mensaje,'validar'=>$validar));
     }
     
-    
+    function array_sort_by(&$arrIni, $col, $order = SORT_ASC)
+    {
+        $arrAux = array();
+        foreach ($arrIni as $key=> $row)
+        {
+            $arrAux[$key] = is_object($row) ? $arrAux[$key] = $row->$col : $row[$col];
+            $arrAux[$key] = strtolower($arrAux[$key]);
+        }
+        array_multisort($arrAux, $order, $arrIni);
+    }
+
     public function filtrarresultadosAction()
     {
         $mensaje = '<div class="alert alert-danger text-center" role="alert">OCURRIÓ UN ERROR INESPERADO</div>';
@@ -280,7 +380,7 @@ class ResultadosController extends AbstractActionController
         GROUP by candidatos.idTipoCandidato
         ORDER by candidatos.puesto, numeroVotos DESC",Adapter::QUERY_MODE_EXECUTE)->toArray();
 
-        if(count($listaTotalVotos)){
+        if(count($listaTotalVotos) > 0){
             $totalVotos = $listaTotalVotos[0]['numeroTotalVotos'];
             
         }
@@ -526,7 +626,7 @@ class ResultadosController extends AbstractActionController
                 where candidatos.idTipoCandidato = $idTipoCandidato  
                 GROUP by candidatos.idTipoCandidato
                 ORDER by candidatos.puesto, numeroVotos DESC",Adapter::QUERY_MODE_EXECUTE)->toArray();
-            if(count($listaTotalVotos)){
+            if(count($listaTotalVotos) > 0){
                 $totalVotos = $listaTotalVotos[0]['numeroTotalVotos'];
             }
             
@@ -556,7 +656,7 @@ class ResultadosController extends AbstractActionController
                 GROUP by candidatos.idTipoCandidato
                 ORDER by candidatos.puesto, numeroVotos DESC",Adapter::QUERY_MODE_EXECUTE)->toArray();
             
-            if(count($listaTotalVotos)){
+            if(count($listaTotalVotos) > 0){
                 $totalVotos = $listaTotalVotos[0]['numeroTotalVotos'];
             }
             
@@ -584,7 +684,7 @@ class ResultadosController extends AbstractActionController
                 GROUP by candidatos.idTipoCandidato
                 ORDER by candidatos.puesto, numeroVotos DESC",Adapter::QUERY_MODE_EXECUTE)->toArray();
             
-            if(count($listaTotalVotos)){
+            if(count($listaTotalVotos) > 0){
                 $totalVotos = $listaTotalVotos[0]['numeroTotalVotos'];
             }
             
@@ -614,7 +714,7 @@ class ResultadosController extends AbstractActionController
                 GROUP by candidatos.idTipoCandidato
                 ORDER by candidatos.puesto, numeroVotos DESC",Adapter::QUERY_MODE_EXECUTE)->toArray();
             
-            if(count($listaTotalVotos)){
+            if(count($listaTotalVotos) > 0){
                 $totalVotos = $listaTotalVotos[0]['numeroTotalVotos'];
             }
             
@@ -633,7 +733,7 @@ class ResultadosController extends AbstractActionController
                 ORDER by candidatos.puesto, numeroVotos DESC",Adapter::QUERY_MODE_EXECUTE)->toArray();
         }else{
             $titulo = '<h1 style="text-align:center;">RESULTADOS EN LA ZONA ELECTORAL '.$nombreParroquia.'<br> JUNTA '.$nombreSexo.' N° '.$nombreJunta.'</h1>';
-            
+//            
             $listaTotalVotos = $this->dbAdapter->query("select SUM(totalvotos.numeroVotos) as numeroTotalVotos
                 from totalvotos  
                 INNER join candidatos on totalvotos.idCandidato = candidatos.idCandidato
@@ -644,11 +744,12 @@ class ResultadosController extends AbstractActionController
                 and configurarjunta.idSexo = $idSexo and totalvotos.idConfigurarJunta = $idConfigurarJunta
                 GROUP by candidatos.idTipoCandidato
                 ORDER by candidatos.puesto, numeroVotos DESC",Adapter::QUERY_MODE_EXECUTE)->toArray();
-            
-            if(count($listaTotalVotos)){
+           
+            if(count($listaTotalVotos) > 0 ){
+                
                 $totalVotos = $listaTotalVotos[0]['numeroTotalVotos'];
             }
-            
+           
             $listaResultados = $this->dbAdapter->query("select listas.nombreLista, listas.numeroLista, listas.rutaFotoLista, 
                 tipocandidato.identificadorTipoCandidato,
                 candidatos.nombres,candidatos.rutaFotoCandidato, candidatos.puesto,
@@ -664,23 +765,25 @@ class ResultadosController extends AbstractActionController
                 ORDER by candidatos.puesto, numeroVotos DESC",Adapter::QUERY_MODE_EXECUTE)->toArray();
         }
         
-        $filaVotosInvalidos = '';
+        $filaVotosInvalidos = "";
         $totalVotosNulos = 0;
         $totalVotosBlanco = 0;
+        $porcentajeNulos = 0;
+        $porcentajeBlanco = 0;
         if(count($listaTotalVotosInvalidos) > 0){
             foreach ($listaTotalVotosInvalidos as $valueVotosInvalidos) {
                 if($valueVotosInvalidos['identificadorTipoVotoInvalido'] == 1){
-                    $totalVotosNulos = $valueVotosInvalidos['numeroVotos'];
+                    $totalVotosNulos =  $valueVotosInvalidos['numeroVotos'];
                 }else{
                     $totalVotosBlanco = $valueVotosInvalidos['numeroVotos'];
                 }
                 $totalVotos = $totalVotos + $valueVotosInvalidos['numeroVotos'];
             }
-            $porcentajeNulos = 0;
-            $porcentajeBlanco = 0;
             foreach ($listaTotalVotosInvalidos as $valueVotosInvalidos) {
                 if($valueVotosInvalidos['identificadorTipoVotoInvalido'] == 1){
-                    $porcentajeNulos = ($totalVotosNulos/$totalVotos)*100;
+                    if($totalVotos > 0){
+                        $porcentajeNulos = ($totalVotosNulos/$totalVotos)*100;
+                    }
                     $filaVotosInvalidos = $filaVotosInvalidos.'<tr>
                     <td style="text-align:center;vertical-align: middle; background-color: #FFDCD6;"></td>
                     <td style="text-align:center;vertical-align: middle; background-color: #FFDCD6;"></td>
@@ -691,7 +794,9 @@ class ResultadosController extends AbstractActionController
                     <td style="text-align:center;vertical-align: middle; background-color: #FFDCD6;"><b>'.  number_format($porcentajeNulos,2).'%</b></td>
                 </tr>';
                 }else{
-                    $porcentajeBlanco = ($totalVotosBlanco/$totalVotos)*100;
+                    if($totalVotos > 0){
+                        $porcentajeBlanco = ($totalVotosBlanco/$totalVotos)*100;
+                    }
                     $filaVotosInvalidos = $filaVotosInvalidos.'<tr>
                     <td style="text-align:center;vertical-align: middle; background-color: #FFDCD6;"></td>
                     <td style="text-align:center;vertical-align: middle; background-color: #FFDCD6;"></td>
@@ -703,6 +808,25 @@ class ResultadosController extends AbstractActionController
                 </tr>';
                 }
             }
+        }else{
+            $filaVotosInvalidos = $filaVotosInvalidos.'<tr>
+                    <td style="text-align:center;vertical-align: middle; background-color: #FFDCD6;"></td>
+                    <td style="text-align:center;vertical-align: middle; background-color: #FFDCD6;"></td>
+                    <td style="text-align:center;vertical-align: middle; background-color: #FFDCD6;"></td>
+                    <td style="text-align:center;vertical-align: middle; background-color: #FFDCD6;"></td>
+                    <td style="vertical-align: middle; background-color: #FFDCD6;"><b>VOTOS NULOS</b></td>
+                    <td style="text-align:center;vertical-align: middle; background-color: #FFDCD6;"><b>0</b></td>
+                    <td style="text-align:center;vertical-align: middle; background-color: #FFDCD6;"><b>0%</b></td>
+                </tr><tr>
+                
+                    <td style="text-align:center;vertical-align: middle; background-color: #FFDCD6;"></td>
+                    <td style="text-align:center;vertical-align: middle; background-color: #FFDCD6;"></td>
+                    <td style="text-align:center;vertical-align: middle; background-color: #FFDCD6;"></td>
+                    <td style="text-align:center;vertical-align: middle; background-color: #FFDCD6;"></td>
+                    <td style="vertical-align: middle; background-color: #FFDCD6;"><b>VOTOS EN BLANCO</b></td>
+                    <td style="text-align:center;vertical-align: middle; background-color: #FFDCD6;"><b>0</b></td>
+                    <td style="text-align:center;vertical-align: middle; background-color: #FFDCD6;"><b>0%</b></td>
+                </tr>';
         }
         
         
@@ -717,8 +841,9 @@ class ResultadosController extends AbstractActionController
             if(($contador%2) == 0){
                 $colorFondo = 'background-color: #D0F5FD;';
             }
-            $porcentaje = ($valueResultado['numeroVotos']/$totalVotos)*100;
-            
+            if($totalVotos > 0){
+                $porcentaje = ($valueResultado['numeroVotos']/$totalVotos)*100;
+            }
             $filasResultado = $filasResultado.'
                 <tr>
                     <td style="text-align:center;vertical-align: middle;'.$colorFondo.'"><b>'.$contador.'</b></td>
@@ -733,7 +858,7 @@ class ResultadosController extends AbstractActionController
             ';
             $contador++;
             $totalPorcentaje = $totalPorcentaje + $porcentaje;
-            
+//            
         }
          
         
