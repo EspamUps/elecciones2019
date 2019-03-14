@@ -41,11 +41,7 @@ class IndexController extends AbstractActionController
             $optionTipoCandidato = $optionTipoCandidato.'<option style="font-weight: bold;" value="'.$valueTiposCandidatos['idTipoCandidato'].'">'.$valueTiposCandidatos['descripcionTipoCandidato'].'</option>';
         }
         
-        $listaListasC = $objLista->obtenerListas();
         $optionListas = '<option style="font-weight: bold;" value="0">SELECCIONE UNA LISTA</option>';
-         foreach ($listaListasC as $valueListas) {
-            $optionListas = $optionListas.'<option style="font-weight: bold;" value="'.$valueListas['idLista'].'">'.$valueListas['nombreLista'].'</option>';
-        }
         
          $listaParroquias = $objParroquia->obtenerParroquias();
          $optionParroquia = '<option style="font-weight: bold;" value="0">SELECCIONE UNA ZONA ELECTORAL</option>';
@@ -60,13 +56,16 @@ class IndexController extends AbstractActionController
         }
         
         $optionJunta= '<option style="font-weight: bold;" value="0">SELECCIONE UNA JUNTA</option>';
+        
+        $optionTipoVoto = '<option value="0">VOTOS NORMALES</option><option value="1">VOTOS ESPECIALES</option>';
 
         $array = array(
             'optionTipoCandidato'=>$optionTipoCandidato,
             'optionParroquia'=>$optionParroquia,
             'optionSexo'=>$optionSexo,
             'optionListas'=>$optionListas,
-            'optionJunta'=>$optionJunta
+            'optionJunta'=>$optionJunta,
+            'optionTipoVoto'=>$optionTipoVoto
         );
         return new ViewModel($array);
     }

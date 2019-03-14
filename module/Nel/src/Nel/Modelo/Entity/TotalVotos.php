@@ -25,11 +25,20 @@ class TotalVotos extends TableGateway
             $inserted = $this->insert($array);
             if($inserted)
             {
-                return  $this->getLastInsertValue();
+                return  TRUE;
             }  else {
-                return 0;
+                return FALSE;
             }
         }
+     
+    public function editarTotalVotos($idTotalVotos,$arrayDatos)
+    {
+        return (bool)$this->update($arrayDatos,array('idTotalVotos=?'=>$idTotalVotos));
+    }
+    public function filtrarTotalVotosPorCandidatoPorJuntaElectoral($idCandidato,$idConfigurarJuntaElectoral)
+    {
+        return  $this->select(array('idConfigurarJunta'=>$idConfigurarJuntaElectoral, 'idCandidato'=>$idCandidato))->toArray();
+    }
 
  
    

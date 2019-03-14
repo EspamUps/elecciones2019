@@ -5,6 +5,7 @@ $optionJuntas = $this->optionJuntas;
 $optionSexo = $this->optionSexo;
 $optionListas =$this->optionListas;
 $optionJunta =$this->optionJunta;
+$optionTipoVoto=$this->optionTipoVoto;
  ?>
 <div class="content-wrapper" style="min-height: 1123px;">
     <br><br>
@@ -21,15 +22,21 @@ $optionJunta =$this->optionJunta;
                     <div class="col-lg-12">
                         <h2 class="title text-center" style="font-family: fantasy;">ELECCIONES SECCIONALES 2019</h2>
                     </div>
-                    <div  id="mensajeFormIngresarDatos"></div>
+                   
                     <div  class=" col-lg-12">
-                        <div class="form-group col-lg-6" id="contenedorSeleccionarTipoCandidato">
+                        <div class="form-group col-lg-4" id="contenedorSeleccionarTipoCandidato">
                                 <label for="selectTipoCandidato">TIPO DE CANDIDATO</label>
-                                <select class="form-control" id="selectTipoCandidato" name="selectTipoCandidato" onchange="filtrarlistasportipocandidato();">
+                                <select class="form-control" id="selectTipoCandidato" name="selectTipoCandidato" onchange="filtrarlistasportipocandidato();filtrarFormularioIngresarVotos();">
                                 <?php echo $optionTipoCandidato;?>
                                 </select>
                         </div> 
-                         <div class="form-group col-lg-6" id="contenedorSeleccionarListaCandidato">
+                         <div class="form-group col-lg-4" id="contenedorSeleccionarTipoVoto">
+                                <label for="selectTipoVoto">TIPO DE VOTO</label>
+                                <select class="form-control" onchange="filtrarFormularioIngresarVotos();filtrarlistasportipocandidato();"  id="selectTipoVoto" name="selectTipoVoto">
+                                <?php echo $optionTipoVoto;?>
+                                </select>
+                        </div> 
+                         <div class="form-group col-lg-4" id="contenedorSeleccionarListaCandidato">
                                 <label for="selectListaCandidato">LISTA DEL CANDIDATO</label>
                                 <select class="form-control" onchange="filtrarFormularioIngresarVotos();"  id="selectListaCandidato" name="selectListaCandidato">
                                 <?php echo $optionListas;?>
@@ -55,6 +62,9 @@ $optionJunta =$this->optionJunta;
                                 <?php echo $optionJunta;?>
                                 </select>
                         </div> 
+                    </div>
+                    <div  class=" col-lg-12" id="mensajeFormIngresarDatos">
+                        
                     </div>
                     <div  class=" col-lg-12" id="contenedorFormularioVotos">
                         
@@ -143,6 +153,7 @@ $optionJunta =$this->optionJunta;
         var idTipoCandidato =$('#selectTipoCandidato').val();
         var idListaCandidato = $('#selectListaCandidato').val();
         var idConfigurarJunta = $('#selectJuntas').val();
+        var idTipoVoto =$('#selectTipoVoto').val();
         if(idTipoCandidato=="0")
         {
             $('#mensajeFormIngresarDatos').html("");
@@ -158,7 +169,7 @@ $optionJunta =$this->optionJunta;
                 url : '<?php echo $this->basePath();?>/votos/cargarformularioingresovotos',
                 type: 'post',
                 dataType: 'JSON',
-                data: { idTipoCandidato:idTipoCandidato,idListaCandidato:idListaCandidato,idConfigurarJunta:idConfigurarJunta},
+                data: { idTipoCandidato:idTipoCandidato,idListaCandidato:idListaCandidato,idConfigurarJunta:idConfigurarJunta,idTipoVoto:idTipoVoto},
                 beforeSend: function(){
                    cargandoVotos('contenedorFormularioVotos');
                 },
@@ -168,12 +179,17 @@ $optionJunta =$this->optionJunta;
                     if(data.validar == true){
                         $('#contenedorFormularioVotos').html(data.tabla);
                     }else{
-                        $("#contenedorFormularioVotos").html(data.mensaje);
+                        $('#selectJuntas').html("<option value='0'>SELECCIONE UNA JUNTA</option>");
+                         $('#selectListaCandidato').html('<option value="0">SELECCIONE UNA LISTA</option>');
+                        $("#mensajeFormIngresarDatos").html(data.mensaje);
+                         setTimeout(function() {$("#mensajeFormIngresarDatos").html('');},3000); 
                     }
                 },
                 complete: function(){
                 },
                 error: function(xhr, textStatus, errorThrown) {
+                    $('#selectJuntas').html("<option value='0'>SELECCIONE UNA JUNTA</option>");
+                    $('#selectListaCandidato').html('<option value="0">SELECCIONE UNA LISTA</option>');
                     if(xhr.status === 0){
                         $("#contenedorFormularioVotos").html('<div class="alert alert-danger text-center" role="alert">NO HAY CONEXIÓN A INTERNET. VERIFICA LA RED</div>');
                     }else if(xhr.status == 404){
@@ -198,56 +214,222 @@ $optionJunta =$this->optionJunta;
     function filtrarlistasportipocandidato()
     {
         var idTipoCandidato =$('#selectTipoCandidato').val();
+        var idTipoVoto =$('#selectTipoVoto').val();
        
         if(idTipoCandidato=="0")
         {
             $('#mensajeFormIngresarDatos').html("");
              $('#contenedorFormularioVotos').html("");
              $('#selectListaCandidato').html('<option value="0">SELECCIONE UNA LISTA</option>');
-        } 
+        }
         else{
-            $.ajax({
-                url : '<?php echo $this->basePath();?>/votos/filtrarlistaportipocandidato',
-                type: 'post',
-                dataType: 'JSON',
-                data: { idTipoCandidato:idTipoCandidato},
-                beforeSend: function(){
-                    $('#selectListaCandidato').html("<option value='0'>SELECCIONE UNA LISTA</option>");
-                },
-                uploadProgress: function(event,position,total,percentComplete){
-                },
-                success: function(data){  
-                    if(data.validar == true){
-                        $('#selectListaCandidato').html(data.select);
-                          $("#contenedorFormularioVotos").html("");
-                    }else{
+            if(idTipoVoto=="1")
+            {
+                $('#selectListaCandidato').html('<option value="0">SELECCIONE UNA LISTA</option>');
+            }
+            else
+            {
+                $.ajax({
+                    url : '<?php echo $this->basePath();?>/votos/filtrarlistaportipocandidato',
+                    type: 'post',
+                    dataType: 'JSON',
+                    data: { idTipoCandidato:idTipoCandidato},
+                    beforeSend: function(){
                         $('#selectListaCandidato').html("<option value='0'>SELECCIONE UNA LISTA</option>");
+                    },
+                    uploadProgress: function(event,position,total,percentComplete){
+                    },
+                    success: function(data){  
+                        if(data.validar == true){
+                            $('#selectListaCandidato').html(data.select);
+                              $("#contenedorFormularioVotos").html("");
+                        }else{
+                            $('#selectListaCandidato').html("<option value='0'>SELECCIONE UNA LISTA</option>");
+                        }
+                    },
+                    complete: function(){
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                         $("#contenedorFormularioVotos").html('');
+                         $('#selectListaCandidato').html("<option value='0'>SELECCIONE UNA LISTA</option>");
+                        if(xhr.status === 0){
+                            $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">NO HAY CONEXIÓN A INTERNET. VERIFICA LA RED</div>');
+                        }else if(xhr.status == 404){
+                            $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">ERROR [404]. P�?GINA NO ENCONTRADA</div>');
+                        }else if(xhr.status == 500){
+                            $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">ERROR DEL SERVIDOR [500]</div>');
+                        }else if(errorThrown === 'parsererror'){
+                            $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">LA PETICIÓN JSON HA FALLADO </div>');
+                        }else if(errorThrown === 'timeout'){
+                            $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">TIEMPO DE ESPERA TERMINADO</div>');
+                        }else if(errorThrown === 'abort'){
+                            $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">LA PETICIÓN AJAX FUE ABORTADA</div>');
+                        }else{
+                            $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">OCURRIÓ UN ERROR INESPERADO</div>');
+                        }
                     }
-                },
-                complete: function(){
-                },
-                error: function(xhr, textStatus, errorThrown) {
-                     $("#contenedorFormularioVotos").html('');
-                     $('#selectListaCandidato').html("<option value='0'>SELECCIONE UNA LISTA</option>");
-                    if(xhr.status === 0){
-                        $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">NO HAY CONEXIÓN A INTERNET. VERIFICA LA RED</div>');
-                    }else if(xhr.status == 404){
-                        $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">ERROR [404]. P�?GINA NO ENCONTRADA</div>');
-                    }else if(xhr.status == 500){
-                        $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">ERROR DEL SERVIDOR [500]</div>');
-                    }else if(errorThrown === 'parsererror'){
-                        $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">LA PETICIÓN JSON HA FALLADO </div>');
-                    }else if(errorThrown === 'timeout'){
-                        $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">TIEMPO DE ESPERA TERMINADO</div>');
-                    }else if(errorThrown === 'abort'){
-                        $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">LA PETICIÓN AJAX FUE ABORTADA</div>');
-                    }else{
-                        $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">OCURRIÓ UN ERROR INESPERADO</div>');
-                    }
-                }
-            }); 
+                }); 
+            }
         }
     }
+
+function guardarVotosLista(contador, contadorPorLista)
+{ 
+    var idConfigurarJunta = $('#selectJuntas').val();
+    var _arrayVotos = new Array(contador);
+    var j=0;
+    if(idConfigurarJunta==="0")
+    {
+        $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">NO SE HA SELECCIONADO UNA JUNTA PARA GUARDAR LOS VOTOS</div>');
+    }
+    else
+    {
+        for(var i=1; i<=contador; i++)
+        {
+            var _arrayDatosCandidato = new Array(2);
+            var idCandidato = $("#candidato"+i+contadorPorLista).val();
+            var numeroVotos = $("#votos"+i+contadorPorLista).val();
+
+            _arrayDatosCandidato[0] = idCandidato;
+            _arrayDatosCandidato[1] = numeroVotos;     
+            _arrayVotos[j] = _arrayDatosCandidato;
+            j++;
+        }
+        
+        if(_arrayVotos.length===0){
+           $("#contenedorFormularioVotos").html('<div class="alert alert-danger text-center" role="alert">NO SE ENCONTRARON VOTOS</div>');
+        }
+        else
+        {
+        $.ajax({
+                        url : '<?php echo $this->basePath();?>/votos/guardarvotosporlista',
+                        type: 'post',
+                        dataType: 'JSON',
+                        data: { arrayVotos:_arrayVotos, idConfigurarJunta:idConfigurarJunta, contadorPorLista:contadorPorLista},
+                        beforeSend: function(){
+                           
+                        },
+                        uploadProgress: function(event,position,total,percentComplete){
+                        },
+                        success: function(data){  
+                            if(data.validar == true){
+                                 cargandoVotos('contenedorVotosPorLista'+contadorPorLista);
+                                $('#contenedorVotosPorLista'+contadorPorLista).html(data.tabla);
+                            }else{
+                                 $("#mensajeVotosPorLista"+contadorPorLista).html(data.mensaje);
+                                setTimeout(function() {$("#mensajeVotosPorLista"+contadorPorLista).html('');},1500); 
+                                 
+                            }
+                        },
+                        complete: function(){
+                        },
+                        error: function(xhr, textStatus, errorThrown) {
+                             $("#contenedorFormularioVotos").html('');
+                            if(xhr.status === 0){
+                                $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">NO HAY CONEXIÓN A INTERNET. VERIFICA LA RED</div>');
+                            }else if(xhr.status == 404){
+                                $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">ERROR [404]. P�?GINA NO ENCONTRADA</div>');
+                            }else if(xhr.status == 500){
+                                $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">ERROR DEL SERVIDOR [500]</div>');
+                            }else if(errorThrown === 'parsererror'){
+                                $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">LA PETICIÓN JSON HA FALLADO </div>');
+                            }else if(errorThrown === 'timeout'){
+                                $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">TIEMPO DE ESPERA TERMINADO</div>');
+                            }else if(errorThrown === 'abort'){
+                                $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">LA PETICIÓN AJAX FUE ABORTADA</div>');
+                            }else{
+                                $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">OCURRIÓ UN ERROR INESPERADO</div>');
+                            }
+                        }
+                    }); 
+
+        }
+    }
+}
+
+
+
+function guardarVotosEspeciales(contador)
+{ 
+    debugger
+     var idTipoCandidato =$('#selectTipoCandidato').val();
+    var idConfigurarJunta = $('#selectJuntas').val();
+    var _arrayVotos = new Array(contador);
+    var j=0;
+    if(idConfigurarJunta==="0")
+    {
+        $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">NO SE HA SELECCIONADO UNA JUNTA PARA GUARDAR LOS VOTOS</div>');
+    }
+    else  if(idTipoCandidato==="0")
+    {
+        $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">NO SE HA SELECCIONADO UN TIPO DE CANDIDATO</div>');
+    }
+    else
+    {
+        for(var i=1; i<=contador; i++)
+        {
+            var _arrayDatosVotos = new Array(2);
+            var idTipoVoto = $("#tipoVotoInvalido"+i).val();
+            var numeroVotos = $("#votosInvalidos"+i).val();
+
+            _arrayDatosVotos[0] = idTipoVoto;
+            _arrayDatosVotos[1] = numeroVotos;     
+            _arrayVotos[j] = _arrayDatosVotos;
+            j++;
+        }
+        
+        if(_arrayVotos.length===0){
+           $("#contenedorFormularioVotos").html('<div class="alert alert-danger text-center" role="alert">NO SE ENCONTRARON VOTOS</div>');
+        }
+        else
+        {
+        $.ajax({
+                        url : '<?php echo $this->basePath();?>/votos/guardarvotosespeciales',
+                        type: 'post',
+                        dataType: 'JSON',
+                        data: { arrayVotos:_arrayVotos, idConfigurarJunta:idConfigurarJunta, idTipoCandidato:idTipoCandidato},
+                        beforeSend: function(){
+                           
+                        },
+                        uploadProgress: function(event,position,total,percentComplete){
+                        },
+                        success: function(data){  
+                            if(data.validar == true){
+                                 cargandoVotos('contenedorVotosInvalidos');
+                                $('#contenedorVotosInvalidos').html(data.tabla);
+                            }else{
+                                 $("#mensajeFormIngresarDatos").html(data.mensaje);
+                                 
+                                setTimeout(function() {$("#mensajeFormIngresarDatos").html('');},3000); 
+                                 
+                            }
+                        },
+                        complete: function(){
+                        },
+                        error: function(xhr, textStatus, errorThrown) {
+                             $("#contenedorFormularioVotos").html('');
+                            if(xhr.status === 0){
+                                $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">NO HAY CONEXIÓN A INTERNET. VERIFICA LA RED</div>');
+                            }else if(xhr.status == 404){
+                                $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">ERROR [404]. P�?GINA NO ENCONTRADA</div>');
+                            }else if(xhr.status == 500){
+                                $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">ERROR DEL SERVIDOR [500]</div>');
+                            }else if(errorThrown === 'parsererror'){
+                                $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">LA PETICIÓN JSON HA FALLADO </div>');
+                            }else if(errorThrown === 'timeout'){
+                                $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">TIEMPO DE ESPERA TERMINADO</div>');
+                            }else if(errorThrown === 'abort'){
+                                $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">LA PETICIÓN AJAX FUE ABORTADA</div>');
+                            }else{
+                                $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">OCURRIÓ UN ERROR INESPERADO</div>');
+                            }
+                        }
+                    }); 
+
+        }
+    }
+}
+
 
 </script>
 <!--<script type="text/javascript">

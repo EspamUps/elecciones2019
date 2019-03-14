@@ -17,6 +17,12 @@ class TipoTotalVotosInvalidos extends TableGateway
     {
         return parent::__construct('tipototalvotosinvalidos', $adapter, $databaseSchema, $selectResultPrototype);
     }  
+    
+    
+     public function obtenerTipoTotalVotosInvalidos()
+    {
+        return  $this->select()->toArray();
+    } 
 
  
    
