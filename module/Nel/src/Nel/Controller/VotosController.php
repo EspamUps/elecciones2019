@@ -78,6 +78,61 @@ class VotosController extends AbstractActionController
     }
     
     
+     public function filtrarzonaportipocandidatoAction()
+    {
+        $mensaje = '<div class="alert alert-danger text-center" role="alert">OCURRIÓ UN ERROR INESPERADO</div>';
+        $validar = false;
+        $request=$this->getRequest();
+        if(!$request->isPost()){
+            $this->redirect()->toUrl($this->getRequest()->getBaseUrl().'/index/index');
+        }else{
+            $this->dbAdapter=$this->getServiceLocator()->get('Zend\Db\Adapter');
+           
+            $post = array_merge_recursive(
+                $request->getPost()->toArray(),
+                $request->getFiles()->toArray()
+            );
+            $idTipoCandidato = $post['idTipoCandidato'];
+            if($idTipoCandidato == "" || $idTipoCandidato == NULL){
+                $mensaje = '<div class="alert alert-danger text-center" role="alert">NO SE ENCUENTRA EL ÍNDICE DEL TIPO DE CANDIDATO</div>';
+            }else{
+                $objTipoCandidato = new TipoCandidato($this->dbAdapter);
+                $listaTipoCandidato =$objTipoCandidato->filtrarTipoCandidato($idTipoCandidato);
+                
+                if(count($listaTipoCandidato) == 0){
+                    $mensaje = '<div class="alert alert-danger text-center" role="alert">EL TIPO CANDIDATO SELECCIONADO NO EXISTE EN LA BASE DE DATOS</div>';
+                }else{
+                    $where ="";
+                    if($listaTipoCandidato[0]['identificadorTipoCandidato']=="2")
+                    {
+                        $where = "where parroquia.identificadorParroquia = 1 ";
+                    }else if($listaTipoCandidato[0]['identificadorTipoCandidato']=="3"){
+                        $where = "where parroquia.identificadorParroquia = 2 or parroquia.identificadorParroquia = 3 ";
+                    }else if($listaTipoCandidato[0]['identificadorTipoCandidato']=="4"){
+                        $where = "where parroquia.identificadorParroquia = 2 ";
+                    }else if($listaTipoCandidato[0]['identificadorTipoCandidato']=="5"){
+                        $where = "where parroquia.identificadorParroquia = 3 ";
+                    }
+                    
+                    $listaParroquias = $this->dbAdapter->query("SELECT *
+                            FROM parroquia  ".$where."",Adapter::QUERY_MODE_EXECUTE)->toArray();
+                          
+                          
+                    $optionParroquias='<option value="0">SELECCIONE UNA ZONA ELECTORAL</option>';
+                         foreach ($listaParroquias as $value) {
+                               $optionParroquias=$optionParroquias.'<option value="'.$value['idParroquia'].'">'.$value['nombreParroquia'].'</option>'; 
+                            }
+                    $mensaje = '';
+                    $validar = TRUE;
+                    return new JsonModel(array('mensaje'=>$mensaje,'validar'=>$validar,'select'=>$optionParroquias));
+                    }                
+            }
+        }        
+        return new JsonModel(array('mensaje'=>$mensaje,'validar'=>$validar));
+    }
+    
+    
+    
     
      public function filtrarlistaportipocandidatoAction()
     {
@@ -230,7 +285,7 @@ class VotosController extends AbstractActionController
                                                                     .'<th class="text-center" style="vertical-align: middle;">'.$input.' '.$valueCandidato['puesto'].'</th>'
                                                                     .'<th class="text-center"  style="vertical-align: middle;"><img src="'.$this->getRequest()->getBaseUrl().'/'.$valueCandidato['rutaFotoCandidato'].'" style="width: 100%;"></th>'
                                                                     .'<th class="text-center" style="vertical-align: middle;">'.$valueCandidato['nombres'].'</th>'
-                                                                    .'<th class="text-center"  style="vertical-align: middle;"><input id="votos'.$contador.''.$contadorPorLista.'" name="votos'.$contador.''.$contadorPorLista.'" type="number" value="'.$valor.'"></input></th>'
+                                                                    .'<th class="text-center"  style="vertical-align: middle;"><input onKeyPress="return soloNumeros(event)" step="1" id="votos'.$contador.''.$contadorPorLista.'" name="votos'.$contador.''.$contadorPorLista.'" type="number" value="'.$valor.'"></input></th>'
                                                                 . '</tr>';
                                                         }
 
@@ -300,7 +355,7 @@ class VotosController extends AbstractActionController
                                                 $cuerpoVotosI = $cuerpoVotosI.'<tr style="background-color:'.$colorCelda.'">'
                                                                                 .'<th class="text-center" style="vertical-align: middle;">'.$input.''.$contadorInvalidos.'</th>'
                                                                                 .'<th class="text-center" style="vertical-align: middle;">'.$valueTipoVotosInvalidos['descripcionTipoVotosInvalidos'].'</th>'
-                                                                                .'<th class="text-center" style="vertical-align: middle;"><input value="'.$valor.'" id="votosInvalidos'.$contadorInvalidos.'" name="votosInvalidos'.$contadorInvalidos.'" type="number"></input></th>'
+                                                                                .'<th class="text-center" style="vertical-align: middle;"><input onKeyPress="return soloNumeros(event)" step="1"  value="'.$valor.'" id="votosInvalidos'.$contadorInvalidos.'" name="votosInvalidos'.$contadorInvalidos.'" type="number"></input></th>'
                                                                              . '</tr>';
                                                 $contadorInvalidos++;
                                             }
@@ -433,7 +488,7 @@ class VotosController extends AbstractActionController
                                 .'<th class="text-center" style="vertical-align: middle;">'.$input.' '.$listaCandidato[0]['puesto'].'</th>'
                                 .'<th class="text-center"  style="vertical-align: middle;"><img src="'.$this->getRequest()->getBaseUrl().'/'.$listaCandidato[0]['rutaFotoCandidato'].'" style="width: 100%;"></th>'
                                 .'<th class="text-center" style="vertical-align: middle;">'.$listaCandidato[0]['nombres'].'</th>'
-                                .'<th class="text-center"  style="vertical-align: middle;"><input id="votos'.$contador.''.$contadorPorLista.'" name="votos'.$contador.''.$contadorPorLista.'" type="number" value="'.$valor.'"></input></th>'
+                                .'<th class="text-center"  style="vertical-align: middle;"><input onKeyPress="return soloNumeros(event)" step="1"  id="votos'.$contador.''.$contadorPorLista.'" name="votos'.$contador.''.$contadorPorLista.'" type="number" value="'.$valor.'"></input></th>'
                             . '</tr>';
                 }
                 $lista = $objLista->filtrarLista($listaCandidato[0]['idListaCandidato']);
@@ -543,7 +598,7 @@ class VotosController extends AbstractActionController
                        $cuerpoVotosI = $cuerpoVotosI.'<tr style="background-color:'.$colorCelda.'">'
                                                     .'<th class="text-center" style="vertical-align: middle;">'.$input.' '.$contadorInvalidos.'</th>'
                                                     .'<th class="text-center" style="vertical-align: middle;">'.$valueTipoVotosInvalidos['descripcionTipoVotosInvalidos'].'</th>'
-                                                    .'<th class="text-center" style="vertical-align: middle;"><input value="'.$valor.'" id="votosInvalidos'.$contadorInvalidos.'" name="votosInvalidos'.$contadorInvalidos.'" type="number"></input></th>'
+                                                    .'<th class="text-center" style="vertical-align: middle;"><input step="1" onKeyPress="return soloNumeros(event)" value="'.$valor.'" id="votosInvalidos'.$contadorInvalidos.'" name="votosInvalidos'.$contadorInvalidos.'" type="number"></input></th>'
                                                     . '</tr>';
                         $contadorInvalidos++;
                 }

@@ -43,11 +43,8 @@ class IndexController extends AbstractActionController
         
         $optionListas = '<option style="font-weight: bold;" value="0">SELECCIONE UNA LISTA</option>';
         
-         $listaParroquias = $objParroquia->obtenerParroquias();
          $optionParroquia = '<option style="font-weight: bold;" value="0">SELECCIONE UNA ZONA ELECTORAL</option>';
-         foreach ($listaParroquias as $valueParroquias) {
-            $optionParroquia = $optionParroquia.'<option style="font-weight: bold;" value="'.$valueParroquias['idParroquia'].'">'.$valueParroquias['nombreParroquia'].'</option>';
-        }
+         
         
           $listaSexo = $objSexo->obtenerSexo();
          $optionSexo = '<option style="font-weight: bold;" value="0">SELECCIONE UN SEXO</option>';
