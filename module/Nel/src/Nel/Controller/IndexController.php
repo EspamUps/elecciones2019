@@ -77,55 +77,5 @@ class IndexController extends AbstractActionController
             
         );
         return new ViewModel($array);
-    }
-    
-//    public function resultadosAction()
-//    {
-//        set_time_limit(600);
-//        $this->layout('layout/encuesta');
-//        $this->dbAdapter=$this->getServiceLocator()->get('Zend\Db\Adapter');
-//        $objSectores = new Sector($this->dbAdapter);
-//        $objParroquia = new Parroquia($this->dbAdapter);
-//        $objRangoEdad = new RangoEdad($this->dbAdapter);
-//        $objSexo = new Sexo($this->dbAdapter);
-//        $objMetodos = new Metodos();
-//        $listaSector = $objSectores->obtenerSector();
-//        $optionSectores = '<option style="font-weight: bold;" value="0">SELECCIONE UN SECTOR</option>';
-//        foreach ($listaSector as $valueSector) {
-//            $idSectorEncriptado = $objMetodos->encriptar($valueSector['idSector']);
-//            $optionSectores = $optionSectores.'<option style="font-weight: bold;" value="'.$idSectorEncriptado.'">'.$valueSector['descripcionSector'].'</option>';
-//        }
-//        
-//        $listaParroquia = $objParroquia->obtenerParroquias();
-//        $optionParroquias = '<option style="font-weight: bold;" value="0">SELECCIONE UNA PARRÓQUIA</option>';
-//        foreach ($listaParroquia as $valueParroquia){
-//            $idParroquiaEncriptado = $objMetodos->encriptar($valueParroquia['idParroquia']);
-//            $optionParroquias = $optionParroquias.'<option style="font-weight: bold;" value="'.$idParroquiaEncriptado.'">'.$valueParroquia['descripcionParroquia'].'</option>';
-//            
-//        }
-//         
-//        $listaRangoEdad = $objRangoEdad->obtenerRangoEdad();
-//        $optionRangoEdad = '<option style="font-weight: bold;" value="0">SELECCIONE UN RANGO DE EDAD</option>';
-//        foreach ($listaRangoEdad as $valueRangoEdad) {
-//            $idRangoEdadEncriptado = $objMetodos->encriptar($valueRangoEdad['idRangoEdad']);
-//            $optionRangoEdad = $optionRangoEdad.'<option style="font-weight: bold;" value="'.$idRangoEdadEncriptado.'">'.$valueRangoEdad['descripcionEdad'].'</option>';
-//        }
-//        $listaSexo = $objSexo->obtenerSexo();
-//        $optionSexo = '<option style="font-weight: bold;" value="0">SELECCIONE UN SEXO</option>';
-//        foreach ($listaSexo as $valueSexo) {
-//            $idSexoEncriptado = $objMetodos->encriptar($valueSexo['idSexo']);
-//            $optionSexo = $optionSexo.'<option style="font-weight: bold;" value="'.$idSexoEncriptado.'">'.$valueSexo['descripcionSexo'].'</option>';
-//        }
-//        
-//        
-//        
-//        $array = array(
-//            'optionSectores'=>$optionSectores,
-//            'optionSexo'=>$optionSexo,
-//            'optionParroquias'=>$optionParroquias,
-//            'optionRangoEdad'=>$optionRangoEdad
-//        );
-//        return new ViewModel($array);
-//    }
-//     
+    }    
 }

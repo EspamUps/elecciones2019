@@ -117,7 +117,7 @@ class VotosController extends AbstractActionController
                     $listaParroquias = $this->dbAdapter->query("SELECT *
                             FROM parroquia  ".$where."",Adapter::QUERY_MODE_EXECUTE)->toArray();
                           
-                          
+                    $objCandidato = new Candidatos($this->dbAdapter);
                     $optionParroquias='<option value="0">SELECCIONE UNA ZONA ELECTORAL</option>';
                          foreach ($listaParroquias as $value) {
                                $optionParroquias=$optionParroquias.'<option value="'.$value['idParroquia'].'">'.$value['nombreParroquia'].'</option>'; 
