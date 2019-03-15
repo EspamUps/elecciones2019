@@ -86,7 +86,9 @@ $optionTipoVoto=$this->optionTipoVoto;
     function filtrarJuntasElectorales()
     {
         var idParroquia = $('#selectParroquia').val();
-        var idSexo = $('#selectSexo').val();
+        var idSexo = $('#selectSexo').val();        
+        var idTipoCandidato =$('#selectTipoCandidato').val();
+        var idListaCandidato =$('#selectListaCandidato').val();
         
         if(idParroquia=="0")
         {
@@ -105,7 +107,7 @@ $optionTipoVoto=$this->optionTipoVoto;
                 url : '<?php echo $this->basePath();?>/votos/filtrarjuntaselectorales',
                 type: 'post',
                 dataType: 'JSON',
-                data: {idParroquia: idParroquia,idSexo:idSexo },
+                data: {idParroquia: idParroquia,idSexo:idSexo, idTipoCandidato:idTipoCandidato,idListaCandidato:idListaCandidato},
                 beforeSend: function(){
                      $('#contenedorFormularioVotos').html("");
                     $('#selectJuntas').html("<option value='0'>CARGANDO... </option>");
@@ -114,6 +116,7 @@ $optionTipoVoto=$this->optionTipoVoto;
                 },
                 success: function(data){  
                     if(data.validar == true){
+                        console.log(data.top);
                         $('#selectJuntas').html(data.select);
                     }else{
                         $("#mensajeFormIngresarDatos").html(data.mensaje);

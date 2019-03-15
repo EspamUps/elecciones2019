@@ -24,6 +24,12 @@ class TotalVotosInvalidos extends TableGateway
         return  $this->select(array('idConfigurarJuntaElectoral'=>$idConfigurarJuntaElectoral, 'idTipoCandidato'=>$idTipoCandidato,'idTipoVotoInvalido'=>$TipoVotoInvalido))->toArray();
     }
     
+     public function filtrarTotalVotosInvalidosPorTipoCandidatoPorJuntaElectoral($idTipoCandidato,$idConfigurarJuntaElectoral)
+    {
+        return  $this->select(array('idConfigurarJuntaElectoral'=>$idConfigurarJuntaElectoral, 'idTipoCandidato'=>$idTipoCandidato))->toArray();
+    }
+    
+    
    public function ingresarTotalVotosInvalidos($array)
         {
             $inserted = $this->insert($array);

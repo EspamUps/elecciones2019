@@ -42,6 +42,10 @@ class VotosController extends AbstractActionController
             );
             $idParroquia = $post['idParroquia'];
             $idSexo=$post['idSexo'];
+            
+            $idListaCandidato =$post['idListaCandidato'];
+            $idTipoCandidato = $post['idTipoCandidato'];
+            
             if($idParroquia == "" || $idParroquia == NULL){
                 $mensaje = '<div class="alert alert-danger text-center" role="alert">NO SE ENCUENTRA EL ÍNDICE DE LA PARRÓQUIA</div>';
             }else if($idSexo == "" || $idSexo == NULL){
@@ -59,14 +63,37 @@ class VotosController extends AbstractActionController
                     if(count($listaSexo) == 0){
                         $mensaje = '<div class="alert alert-danger text-center" role="alert">EL SEXO SELECCIONADO NO EXISTE EN LA BASE DE DATOS</div>';
                     }else{
-                    
-                          $listaJuntas = $this->dbAdapter->query("SELECT configurarjunta.idConfigurarJunta, juntaelectoral.* FROM configurarjunta
+                        
+                        $listaJuntas = $this->dbAdapter->query("SELECT configurarjunta.idConfigurarJunta, juntaelectoral.* FROM configurarjunta
                             INNER JOIN juntaelectoral ON configurarjunta.idJuntaElectoral=juntaelectoral.idJuntaElectoral
                             WHERE configurarjunta.idParroquia=$idParroquia and configurarjunta.idSexo=$idSexo",Adapter::QUERY_MODE_EXECUTE)->toArray();
-                          $optionJunta='<option value="0">SELECCIONE UNA JUNTA</option>';
+                        $optionJunta='<option value="0">SELECCIONE UNA JUNTA</option>';
+                          
+                        $objCandidato = new Candidatos($this->dbAdapter);
+                        $objTotalVotosInvalidos = new TotalVotosInvalidos($this->dbAdapter);
+                      
                          foreach ($listaJuntas as $valueJunta) {
-                               $optionJunta=$optionJunta.'<option value="'.$valueJunta['idConfigurarJunta'].'">'.$valueJunta['numeroJunta'].'</option>'; 
+                            $TipoCandidatoConTodosLosVotos=false;
+                            $idConfigurarJunta= $valueJunta['idConfigurarJunta'];
+                            
+                            $listaVotosInvalidos = $objTotalVotosInvalidos->filtrarTotalVotosInvalidosPorTipoCandidatoPorJuntaElectoral($idTipoCandidato, $idConfigurarJunta);
+                            if(count($listaVotosInvalidos)>0)
+                            {
+                            
+                                $totalCandidatosVotados = $this->dbAdapter->query("SELECT * FROM candidatos 
+                                inner join totalvotos on candidatos.idCandidato = totalvotos.idCandidato
+                                where candidatos.idTipoCandidato=$idTipoCandidato and totalvotos.idConfigurarJunta=$idConfigurarJunta",Adapter::QUERY_MODE_EXECUTE)->toArray();
+
+                                $totalCandidatosPorTipo = count($objCandidato->filtrarCandidatoPorTipoCandidato($idTipoCandidato));
+                                if(count($totalCandidatosVotados)==$totalCandidatosPorTipo)
+                                    $TipoCandidatoConTodosLosVotos=true;
                             }
+                            $colorOption ='#fff';
+                            if($TipoCandidatoConTodosLosVotos==true)
+                                $colorOption='#ddeeca';
+                             
+                            $optionJunta=$optionJunta.'<option style="background-color:'.$colorOption.'" value="'.$idConfigurarJunta.'">'.$valueJunta['numeroJunta'].'</option>'; 
+                        }
                     $mensaje = '';
                     $validar = TRUE;
                     return new JsonModel(array('mensaje'=>$mensaje,'validar'=>$validar,'select'=>$optionJunta));
@@ -117,7 +144,7 @@ class VotosController extends AbstractActionController
                     $listaParroquias = $this->dbAdapter->query("SELECT *
                             FROM parroquia  ".$where."",Adapter::QUERY_MODE_EXECUTE)->toArray();
                           
-                    $objCandidato = new Candidatos($this->dbAdapter);
+                          
                     $optionParroquias='<option value="0">SELECCIONE UNA ZONA ELECTORAL</option>';
                          foreach ($listaParroquias as $value) {
                                $optionParroquias=$optionParroquias.'<option value="'.$value['idParroquia'].'">'.$value['nombreParroquia'].'</option>'; 
