@@ -81,7 +81,76 @@ $optionTipoVoto=$this->optionTipoVoto;
         
     }
 </script>
-<script>
+<script> 
+    
+    function actualizarSelectJuntasElectorales(){
+    
+        var idJunta =  $('#selectJuntas').val();
+        var idParroquia = $('#selectParroquia').val();
+        var idSexo = $('#selectSexo').val();        
+        var idTipoCandidato =$('#selectTipoCandidato').val();
+        var idListaCandidato =$('#selectListaCandidato').val();
+        
+        if(idParroquia=="0")
+        {
+            $('#mensajeFormIngresarDatos').html("");
+            $('#contenedorFormularioVotos').html("");
+            $('#selectJuntas').html("<option value='0'>SELECCIONE UNA JUNTA</option>");
+        }
+        else if (idSexo=="0")
+        {            
+            $('#mensajeFormIngresarDatos').html("");
+            $('#contenedorFormularioVotos').html("");
+            $('#selectJuntas').html("<option value='0'>SELECCIONE UNA JUNTA</option>");
+        }
+        else{
+            $.ajax({
+                url : '<?php echo $this->basePath();?>/votos/filtrarjuntaselectorales',
+                type: 'post',
+                dataType: 'JSON',
+                data: {idParroquia: idParroquia,idSexo:idSexo, idTipoCandidato:idTipoCandidato,idListaCandidato:idListaCandidato},
+                beforeSend: function(){
+                    $('#selectJuntas').html("<option value='0'>CARGANDO... </option>");
+                },
+                uploadProgress: function(event,position,total,percentComplete){
+                },
+                success: function(data){  
+                    if(data.validar == true){
+                        $('#selectJuntas').html(data.select);
+                        if(idJunta!=="")
+                            $('#selectJuntas').val(idJunta);
+                    }else{
+                        $("#mensajeFormIngresarDatos").html(data.mensaje);
+                        $('#contenedorFormularioVotos').html("");
+                         $("#mensajeFormIngresarDatos").html("");
+                     $('#selectJuntas').html("<option value='0'>SELECCIONE UNA JUNTA</option>");
+                    }
+                },
+                complete: function(){
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    $('#selectJuntas').html("<option value='0'>SELECCIONE UNA JUNTA</option>"); 
+                    $('#contenedorFormularioVotos').html("");
+                    if(xhr.status === 0){
+                        $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">NO HAY CONEXIÓN A INTERNET. VERIFICA LA RED</div>');
+                    }else if(xhr.status == 404){
+                        $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">ERROR [404]. P�?GINA NO ENCONTRADA</div>');
+                    }else if(xhr.status == 500){
+                        $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">ERROR DEL SERVIDOR [500]</div>');
+                    }else if(errorThrown === 'parsererror'){
+                        $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">LA PETICIÓN JSON HA FALLADO </div>');
+                    }else if(errorThrown === 'timeout'){
+                        $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">TIEMPO DE ESPERA TERMINADO</div>');
+                    }else if(errorThrown === 'abort'){
+                        $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">LA PETICIÓN AJAX FUE ABORTADA</div>');
+                    }else{
+                        $("#mensajeFormIngresarDatos").html('<div class="alert alert-danger text-center" role="alert">OCURRIÓ UN ERROR INESPERADO</div>');
+                    }
+               }
+            }); 
+        }
+    }
+    
     
     function filtrarJuntasElectorales()
     {
@@ -116,7 +185,6 @@ $optionTipoVoto=$this->optionTipoVoto;
                 },
                 success: function(data){  
                     if(data.validar == true){
-                        console.log(data.top);
                         $('#selectJuntas').html(data.select);
                     }else{
                         $("#mensajeFormIngresarDatos").html(data.mensaje);

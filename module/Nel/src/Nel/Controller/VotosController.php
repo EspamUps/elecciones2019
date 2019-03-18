@@ -331,7 +331,7 @@ class VotosController extends AbstractActionController
                                                                         .$cuerpoTablaCandidatos
                                                                         .'<tr><th></th><th></th><th></th>'
                                                                         . '<th class="text-center">'
-                                                                            .'<button type="button" class="btn btn-success" onclick="guardarVotosLista('.$contador.','.$contadorPorLista.');"><i class="fa fa-check"></i>GUARDAR VOTOS LISTA '.$valueLista['numeroLista'].'</button>'
+                                                                            .'<button type="button" class="btn btn-success" onclick="guardarVotosLista('.$contador.','.$contadorPorLista.');actualizarSelectJuntasElectorales();"><i class="fa fa-check"></i>GUARDAR VOTOS LISTA '.$valueLista['numeroLista'].'</button>'
                                                                         . '</th>'
                                                                     . '</tr>'
                                                                     .'</tbody>'
@@ -393,7 +393,7 @@ class VotosController extends AbstractActionController
                                                                             .$cuerpoVotosI
                                                                                 .'<tr><th></th><th></th>'
                                                                                . '<th class="text-center">'
-                                                                                   .'<button type="button" class="btn btn-success" onclick="guardarVotosEspeciales('.$contadorInvalidos.');"><i class="fa fa-check"></i>GUARDAR VOTOS ESPECIALES</button>'
+                                                                                   .'<button type="button" class="btn btn-success" onclick="guardarVotosEspeciales('.$contadorInvalidos.');actualizarSelectJuntasElectorales();"><i class="fa fa-check"></i>GUARDAR VOTOS ESPECIALES</button>'
                                                                                . '</th>'
                                                                         . '</tbody>'
                                                                     .'</table></div>';
@@ -521,7 +521,7 @@ class VotosController extends AbstractActionController
                 $lista = $objLista->filtrarLista($listaCandidato[0]['idListaCandidato']);
                 $tabla =   $cuerpoTablaCandidatos. '<tr><th></th><th></th><th></th>'
                                 . '<th class="text-center">'
-                                        .'<button type="button" class="btn btn-success" onclick="guardarVotosLista('.$contador.','.$contadorPorLista.');"><i class="fa fa-check"></i>GUARDAR VOTOS LISTA '.$lista[0]['numeroLista'].'</button>'
+                                        .'<button type="button" class="btn btn-success" onclick="guardarVotosLista('.$contador.','.$contadorPorLista.');actualizarSelectJuntasElectorales();"><i class="fa fa-check"></i>GUARDAR VOTOS LISTA '.$lista[0]['numeroLista'].'</button>'
                                 . '</th>'
                             . '</tr>';
                                                         
@@ -633,7 +633,7 @@ class VotosController extends AbstractActionController
                 $tablaVotosInvalidos =  $cuerpoVotosI
                                          .'<tr><th></th><th></th>'
                                          . '<th class="text-center">'
-                                        .'<button type="button" class="btn btn-success" onclick="guardarVotosEspeciales('.$contadorInvalidos.');"><i class="fa fa-check"></i>GUARDAR VOTOS ESPECIALES</button>'
+                                        .'<button type="button" class="btn btn-success" onclick="guardarVotosEspeciales('.$contadorInvalidos.');actualizarSelectJuntasElectorales();"><i class="fa fa-check"></i>GUARDAR VOTOS ESPECIALES</button>'
                                          . '</th>';
                 
                                                         
