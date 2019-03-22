@@ -73,26 +73,24 @@ class VotosController extends AbstractActionController
                         $objTotalVotosInvalidos = new TotalVotosInvalidos($this->dbAdapter);
                       
                          foreach ($listaJuntas as $valueJunta) {
-                            $TipoCandidatoConTodosLosVotos=false;
+                            $colorOption ='';
                             $idConfigurarJunta= $valueJunta['idConfigurarJunta'];
                             
-                            $listaVotosInvalidos = $objTotalVotosInvalidos->filtrarTotalVotosInvalidosPorTipoCandidatoPorJuntaElectoral($idTipoCandidato, $idConfigurarJunta);
-                            if(count($listaVotosInvalidos)>0)
-                            {
-                            
-                                $totalCandidatosVotados = $this->dbAdapter->query("SELECT * FROM candidatos 
+                            $listaVotosInvalidos = $objTotalVotosInvalidos->filtrarTotalVotosInvalidosPorTipoCandidatoPorJuntaElectoral($idConfigurarJunta);
+                            $totalCandidatosVotados = $this->dbAdapter->query("SELECT * FROM candidatos 
                                 inner join totalvotos on candidatos.idCandidato = totalvotos.idCandidato
                                 where candidatos.idTipoCandidato=$idTipoCandidato and totalvotos.idConfigurarJunta=$idConfigurarJunta",Adapter::QUERY_MODE_EXECUTE)->toArray();
-
-                                $totalCandidatosPorTipo = count($objCandidato->filtrarCandidatoPorTipoCandidato($idTipoCandidato));
-                                if(count($totalCandidatosVotados)==$totalCandidatosPorTipo)
-                                    $TipoCandidatoConTodosLosVotos=true;
+                            
+                            $totalCandidatosPorTipo = count($objCandidato->filtrarCandidatoPorTipoCandidato($idTipoCandidato));
+                            if(count($totalCandidatosVotados)==$totalCandidatosPorTipo && count($listaVotosInvalidos)>1)
+                            {
+                                $colorOption='background-color: #ddeeca';
+                                   
                             }
-                            $colorOption ='#fff';
-                            if($TipoCandidatoConTodosLosVotos==true)
-                                $colorOption='#ddeeca';
+                            
+                      
                              
-                            $optionJunta=$optionJunta.'<option style="background-color:'.$colorOption.'" value="'.$idConfigurarJunta.'">'.$valueJunta['numeroJunta'].'</option>'; 
+                            $optionJunta=$optionJunta.'<option style="'.$colorOption.'" value="'.$idConfigurarJunta.'">'.$valueJunta['numeroJunta'].'</option>'; 
                         }
                     $mensaje = '';
                     $validar = TRUE;
